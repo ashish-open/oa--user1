@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '@/services/api';
@@ -207,7 +206,7 @@ const Users: React.FC = () => {
                       <SelectItem value="all">All Ages</SelectItem>
                       <SelectItem value="new">New (≤30 days)</SelectItem>
                       <SelectItem value="recent">Recent (31-90 days)</SelectItem>
-                      <SelectItem value="established">Established (>90 days)</SelectItem>
+                      <SelectItem value="established">Established ({`>90 days`})</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

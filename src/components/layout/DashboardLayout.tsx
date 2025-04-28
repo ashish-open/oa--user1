@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield } from 'lucide-react';
+import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -72,8 +73,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild onClick={() => navigate('/tickets')}>
                       <button className="w-full flex items-center">
+                        <Ticket className="mr-2 h-5 w-5" />
+                        <span>Support Tickets</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+            
+            <SidebarGroup>
+              <SidebarGroupLabel>Admin Tools</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <button className="w-full flex items-center">
                         <BarChart className="mr-2 h-5 w-5" />
-                        <span>Investigation Cases</span>
+                        <span>Reports</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -102,7 +119,38 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                 <SidebarTrigger />
                 <h1 className="text-xl font-semibold">{title}</h1>
               </div>
+              
               <div className="flex items-center gap-4">
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className="bg-transparent">Quick Actions</NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <div className="grid w-[400px] gap-3 p-4">
+                          <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                            <div className="text-sm font-medium leading-none">Export Reports</div>
+                            <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Generate and download risk reports
+                            </div>
+                          </NavigationMenuLink>
+                          <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                            <div className="text-sm font-medium leading-none">Configure Alerts</div>
+                            <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Set up custom alert thresholds
+                            </div>
+                          </NavigationMenuLink>
+                          <NavigationMenuLink className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
+                            <div className="text-sm font-medium leading-none">User Access</div>
+                            <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Manage admin access permissions
+                            </div>
+                          </NavigationMenuLink>
+                        </div>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
+                
                 <form onSubmit={handleSearch} className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
                   <input

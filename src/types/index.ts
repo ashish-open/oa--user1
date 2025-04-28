@@ -7,6 +7,14 @@ export interface User {
   lastName: string;
   role: string;
   createdAt: string;
+  tier?: string;
+  businessType?: string;
+  industry?: string;
+  riskScore?: number;
+  chargebacks?: number;
+  complaints?: number;
+  kycStatus?: 'verified' | 'pending' | 'rejected';
+  phone?: string;
 }
 
 // Transaction types
