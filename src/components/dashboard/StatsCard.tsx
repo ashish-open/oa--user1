@@ -13,6 +13,7 @@ interface StatsCardProps {
     value: number;
     isPositive: boolean;
   };
+  onClick?: () => void;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({
@@ -22,9 +23,17 @@ const StatsCard: React.FC<StatsCardProps> = ({
   icon,
   className,
   trend,
+  onClick,
 }) => {
   return (
-    <Card className={cn('overflow-hidden', className)}>
+    <Card 
+      className={cn(
+        'overflow-hidden', 
+        onClick && 'cursor-pointer hover:border-gray-300 transition-all',
+        className
+      )}
+      onClick={onClick}
+    >
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
