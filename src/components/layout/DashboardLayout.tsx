@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +26,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
       <div className="min-h-screen flex w-full">
         <Sidebar>
           <div className="p-4">
-            <h2 className="text-xl font-bold">Alert Vision</h2>
+            <h2 className="text-xl font-bold">Risk Management Dashboard</h2>
           </div>
           <SidebarContent>
             <SidebarGroup>
