@@ -1,4 +1,3 @@
-
 // User types
 export interface User {
   id: string;
@@ -15,6 +14,20 @@ export interface User {
   complaints?: number;
   kycStatus?: 'verified' | 'pending' | 'rejected';
   phone?: string;
+  transactionVelocity?: 'low' | 'medium' | 'high';
+  lastLoginIp?: string;
+  deviceChanges?: number;
+  locationChanges?: number;
+  unusualActivity?: boolean;
+  riskFactors?: {
+    accountAge: number; // Risk contribution from account age
+    transactionPattern: number; // Risk from transaction patterns
+    chargebacksScore: number; // Risk from chargebacks
+    complaintsScore: number; // Risk from complaints
+    kycScore: number; // Risk from KYC status
+    industryScore: number; // Risk from industry type
+  };
+  riskHistory?: Array<{ date: string; score: number }>;
 }
 
 // Transaction types
@@ -64,4 +77,7 @@ export interface DashboardStats {
   totalAmount: number;
   activeAlerts: number;
   openTickets: number;
+  highRiskUsers?: number;
+  totalChargebacks?: number;
+  totalComplaints?: number;
 }

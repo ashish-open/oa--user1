@@ -1,14 +1,16 @@
+
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '@/services/api';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Clock, Search, Shield } from 'lucide-react';
+import { AlertTriangle, Clock, Search, Shield, UserCheck, AlertCircle, Activity, Zap, Globe, MapPin, Monitor } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -25,7 +27,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from '@/components/ui/label';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Progress } from "@/components/ui/progress";
 import { User } from '@/types';
+
+// Risk score threshold constants
+const RISK_THRESHOLDS = {
+  LOW: 30,
+  MEDIUM: 60
+};
 
 const Users: React.FC = () => {
   // Enhanced filter states
@@ -34,14 +43,46 @@ const Users: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [riskFilter, setRiskFilter] = useState<string>('all');
   const [accountAgeFilter, setAccountAgeFilter] = useState<string>('all');
+  const [industryFilter, setIndustryFilter] = useState<string>('all');
+  const [tierFilter, setTierFilter] = useState<string>('all');
+  const [kycStatusFilter, setKycStatusFilter] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showRiskFactors, setShowRiskFactors] = useState(false);
   
   // Fetch users
   const { data: users, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: getUsers,
   });
+
+  // Calculate risk level based on risk score
+  const getRiskLevel = (score?: number): 'low' | 'medium' | 'high' => {
+    if (score === undefined) return 'medium';
+    if (score < RISK_THRESHOLDS.LOW) return 'low';
+    if (score < RISK_THRESHOLDS.MEDIUM) return 'medium';
+    return 'high';
+  };
+
+  // Get color classes for risk levels
+  const getRiskColor = (level: 'low' | 'medium' | 'high') => {
+    switch (level) {
+      case 'high': return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low': return 'bg-green-100 text-green-800 border-green-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  // Get icon for risk levels
+  const getRiskIcon = (level: 'low' | 'medium' | 'high') => {
+    switch (level) {
+      case 'high': return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      case 'medium': return <Clock className="h-4 w-4 text-yellow-600" />;
+      case 'low': return <Shield className="h-4 w-4 text-green-600" />;
+      default: return <AlertTriangle className="h-4 w-4 text-gray-600" />;
+    }
+  };
 
   // Enhanced filter users with multiple fields
   const filteredUsers = users
@@ -75,10 +116,20 @@ const Users: React.FC = () => {
           accountAgeFilter === 'established' ? accountAge > 90 : true;
           
         // Calculate risk level for filtering
-        const riskLevel = accountAge < 30 ? 'high' : accountAge < 90 ? 'medium' : 'low';
+        const riskLevel = getRiskLevel(user.riskScore);
         const matchesRiskLevel = riskFilter === 'all' || riskFilter === riskLevel;
         
-        return matchesSearch && matchesRole && matchesAccountAge && matchesRiskLevel;
+        // Industry filter
+        const matchesIndustry = industryFilter === 'all' || user.industry === industryFilter;
+        
+        // Tier filter
+        const matchesTier = tierFilter === 'all' || user.tier === tierFilter;
+        
+        // KYC status filter
+        const matchesKycStatus = kycStatusFilter === 'all' || user.kycStatus === kycStatusFilter;
+        
+        return matchesSearch && matchesRole && matchesAccountAge && matchesRiskLevel && 
+               matchesIndustry && matchesTier && matchesKycStatus;
       })
     : [];
 
@@ -86,6 +137,16 @@ const Users: React.FC = () => {
   const viewUserDetails = (user: User) => {
     setSelectedUser(user);
   };
+  
+  // Get all available industries from users
+  const availableIndustries = users 
+    ? [...new Set(users.filter(user => user.industry).map(user => user.industry))] 
+    : [];
+    
+  // Get all available tiers from users
+  const availableTiers = users 
+    ? [...new Set(users.filter(user => user.tier).map(user => user.tier))] 
+    : [];
 
   return (
     <DashboardLayout title="User Risk Investigation">
@@ -211,6 +272,63 @@ const Users: React.FC = () => {
                   </Select>
                 </div>
               </div>
+              
+              {/* Additional Filters */}
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="industry-filter">Industry</Label>
+                  <Select
+                    value={industryFilter}
+                    onValueChange={(value) => setIndustryFilter(value)}
+                  >
+                    <SelectTrigger id="industry-filter">
+                      <SelectValue placeholder="Filter by industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Industries</SelectItem>
+                      {availableIndustries.map(industry => (
+                        <SelectItem key={industry} value={industry as string}>{industry}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="tier-filter">User Tier</Label>
+                  <Select
+                    value={tierFilter}
+                    onValueChange={(value) => setTierFilter(value)}
+                  >
+                    <SelectTrigger id="tier-filter">
+                      <SelectValue placeholder="Filter by tier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Tiers</SelectItem>
+                      {availableTiers.map(tier => (
+                        <SelectItem key={tier} value={tier as string}>{tier}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="kyc-filter">KYC Status</Label>
+                  <Select
+                    value={kycStatusFilter}
+                    onValueChange={(value) => setKycStatusFilter(value)}
+                  >
+                    <SelectTrigger id="kyc-filter">
+                      <SelectValue placeholder="Filter by KYC status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="verified">Verified</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
 
             <TabsContent value="all-users">
@@ -230,7 +348,8 @@ const Users: React.FC = () => {
                         <TableHead>Email</TableHead>
                         <TableHead>Role</TableHead>
                         <TableHead>Account Age</TableHead>
-                        <TableHead>Risk Level</TableHead>
+                        <TableHead>Risk Score</TableHead>
+                        <TableHead>KYC Status</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -241,19 +360,17 @@ const Users: React.FC = () => {
                             (new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)
                           );
                           
-                          // Mock risk level based on account age
-                          const riskLevel = accountAge < 30 ? 'high' : accountAge < 90 ? 'medium' : 'low';
-                          const riskIcon = riskLevel === 'high' ? 
-                            <AlertTriangle className="h-4 w-4 text-red-600" /> : 
-                            riskLevel === 'medium' ? 
-                              <Clock className="h-4 w-4 text-yellow-600" /> : 
-                              <Shield className="h-4 w-4 text-green-600" />;
+                          // Get risk level from score
+                          const riskLevel = getRiskLevel(user.riskScore);
+                          const riskIcon = getRiskIcon(riskLevel);
+                          const riskColor = getRiskColor(riskLevel);
                           
-                          const riskColor = {
-                            high: 'bg-red-100 text-red-800 border-red-200',
-                            medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                            low: 'bg-green-100 text-green-800 border-green-200'
-                          }[riskLevel];
+                          // KYC status color
+                          const kycStatusColor = user.kycStatus === 'verified' 
+                            ? 'bg-green-100 text-green-800' 
+                            : user.kycStatus === 'pending'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800';
 
                           return (
                             <TableRow key={user.id} className="hover:bg-gray-50">
@@ -272,9 +389,18 @@ const Users: React.FC = () => {
                                 <div className="flex items-center gap-1">
                                   {riskIcon}
                                   <span className={`px-2 py-1 rounded-full text-xs ${riskColor} border`}>
-                                    {riskLevel}
+                                    {user.riskScore || 'N/A'}
                                   </span>
                                 </div>
+                              </TableCell>
+                              <TableCell>
+                                {user.kycStatus ? (
+                                  <span className={`px-2 py-1 rounded-full text-xs ${kycStatusColor}`}>
+                                    {user.kycStatus}
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-gray-500">N/A</span>
+                                )}
                               </TableCell>
                               <TableCell>
                                 <DropdownMenu>
@@ -285,11 +411,11 @@ const Users: React.FC = () => {
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => viewUserDetails(user)}>
-                                      View Details
+                                      View Risk Profile
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>Flag Account</DropdownMenuItem>
                                     <DropdownMenuItem>View Transactions</DropdownMenuItem>
-                                    <DropdownMenuItem>Risk Assessment</DropdownMenuItem>
+                                    <DropdownMenuItem>Run Risk Assessment</DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </TableCell>
@@ -298,7 +424,7 @@ const Users: React.FC = () => {
                         })
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                          <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                             No users found matching your search criteria.
                           </TableCell>
                         </TableRow>
@@ -339,19 +465,15 @@ const Users: React.FC = () => {
                         (new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)
                       );
                       
-                      // Mock risk level based on account age
-                      const riskLevel = accountAge < 30 ? 'high' : accountAge < 90 ? 'medium' : 'low';
+                      // Get risk level from score
+                      const riskLevel = getRiskLevel(user.riskScore);
                       const riskIcon = riskLevel === 'high' ? 
                         <AlertTriangle className="h-5 w-5 text-red-600" /> : 
                         riskLevel === 'medium' ? 
                           <Clock className="h-5 w-5 text-yellow-600" /> : 
                           <Shield className="h-5 w-5 text-green-600" />;
                       
-                      const riskColor = {
-                        high: 'bg-red-100 text-red-800 border-red-200',
-                        medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                        low: 'bg-green-100 text-green-800 border-green-200'
-                      }[riskLevel];
+                      const riskColor = getRiskColor(riskLevel);
 
                       return (
                         <Card key={user.id} className="overflow-hidden">
@@ -381,18 +503,30 @@ const Users: React.FC = () => {
                                 <span className="text-sm font-medium">{accountAge} days</span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-sm text-muted-foreground">Risk Level:</span>
+                                <span className="text-sm text-muted-foreground">Risk Score:</span>
                                 <span className={`text-xs px-2 py-1 rounded-full ${riskColor} border`}>
-                                  {riskLevel}
+                                  {user.riskScore || 'N/A'}
                                 </span>
                               </div>
+                              {user.kycStatus && (
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-muted-foreground">KYC Status:</span>
+                                  <span className={`text-xs px-2 py-1 rounded-full ${
+                                    user.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
+                                    user.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                    'bg-red-100 text-red-800'
+                                  }`}>
+                                    {user.kycStatus}
+                                  </span>
+                                </div>
+                              )}
                               <Button 
                                 className="w-full mt-2" 
                                 variant="outline" 
                                 size="sm"
                                 onClick={() => viewUserDetails(user)}
                               >
-                                View User Details
+                                View Risk Profile
                               </Button>
                             </div>
                           </CardContent>
@@ -409,16 +543,76 @@ const Users: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="high-risk">
-              <div className="rounded-md border p-4">
-                <div className="flex items-center justify-center bg-yellow-50 border border-yellow-200 p-4 rounded-md">
-                  <div className="flex flex-col items-center">
-                    <AlertTriangle className="h-10 w-10 text-red-500 mb-2" />
-                    <p className="text-lg font-medium">High Risk User View</p>
-                    <p className="text-sm text-muted-foreground">
-                      This will display users with high risk factors when connected to a database.
-                    </p>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {filteredUsers
+                  .filter(user => getRiskLevel(user.riskScore) === 'high')
+                  .map(user => {
+                    const accountAge = Math.floor(
+                      (new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+                    );
+                    
+                    return (
+                      <Card key={user.id} className="overflow-hidden border-red-200">
+                        <CardHeader className="pb-2 bg-red-50">
+                          <div className="flex justify-between">
+                            <div>
+                              <CardTitle className="text-lg">{`${user.firstName} ${user.lastName}`}</CardTitle>
+                              <CardDescription>{user.email}</CardDescription>
+                            </div>
+                            <div>
+                              <AlertTriangle className="h-5 w-5 text-red-600" />
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-4">
+                          <div className="space-y-2">
+                            <div className="flex justify-between">
+                              <span className="text-sm text-muted-foreground">Risk Score:</span>
+                              <span className="text-sm font-bold text-red-600">{user.riskScore}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-sm text-muted-foreground">Account Age:</span>
+                              <span className="text-sm font-medium">{accountAge} days</span>
+                            </div>
+                            {user.chargebacks && user.chargebacks > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-sm text-muted-foreground">Chargebacks:</span>
+                                <span className="text-sm font-medium text-red-600">{user.chargebacks}</span>
+                              </div>
+                            )}
+                            {user.complaints && user.complaints > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-sm text-muted-foreground">Complaints:</span>
+                                <span className="text-sm font-medium text-red-600">{user.complaints}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between">
+                              <span className="text-sm text-muted-foreground">KYC Status:</span>
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                user.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
+                                user.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {user.kycStatus || 'Unknown'}
+                              </span>
+                            </div>
+                            <Button 
+                              className="w-full mt-2 bg-red-600 hover:bg-red-700" 
+                              size="sm"
+                              onClick={() => viewUserDetails(user)}
+                            >
+                              View Risk Details
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                {filteredUsers.filter(user => getRiskLevel(user.riskScore) === 'high').length === 0 && (
+                  <div className="col-span-full text-center py-8 text-muted-foreground">
+                    No high-risk users found matching your search criteria.
                   </div>
-                </div>
+                )}
               </div>
             </TabsContent>
             
@@ -439,73 +633,262 @@ const Users: React.FC = () => {
         </Card>
       </Tabs>
 
-      {/* This would normally be a detailed user profile modal */}
+      {/* Enhanced User Risk Profile Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedUser(null)}>
-          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">User Profile: {selectedUser.firstName} {selectedUser.lastName}</h2>
+              <h2 className="text-xl font-bold">Risk Profile: {selectedUser.firstName} {selectedUser.lastName}</h2>
               <Button variant="ghost" size="sm" onClick={() => setSelectedUser(null)}>
                 Close
               </Button>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <p className="text-sm text-muted-foreground">User ID</p>
-                <p className="font-medium">{selectedUser.id}</p>
+            {/* Risk Score Overview */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium">Risk Score</h3>
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                    getRiskColor(getRiskLevel(selectedUser.riskScore))
+                  }`}>
+                    {selectedUser.riskScore || 'N/A'}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {getRiskLevel(selectedUser.riskScore).toUpperCase()} RISK
+                  </span>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Email</p>
-                <p className="font-medium">{selectedUser.email}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Role</p>
-                <p className="font-medium">{selectedUser.role}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Account Created</p>
-                <p className="font-medium">{new Date(selectedUser.createdAt).toLocaleDateString()}</p>
+              <Progress 
+                value={selectedUser.riskScore} 
+                max={100}
+                className={`h-3 mt-2 ${
+                  getRiskLevel(selectedUser.riskScore) === 'high' ? 'bg-red-100' : 
+                  getRiskLevel(selectedUser.riskScore) === 'medium' ? 'bg-yellow-100' : 
+                  'bg-green-100'
+                }`}
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <Card>
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm">Personal Info</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2 px-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">ID</span>
+                      <span className="text-xs font-medium">{selectedUser.id}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Email</span>
+                      <span className="text-xs font-medium">{selectedUser.email}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Phone</span>
+                      <span className="text-xs font-medium">{selectedUser.phone || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Created</span>
+                      <span className="text-xs font-medium">{new Date(selectedUser.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm">Business Info</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2 px-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Business Type</span>
+                      <span className="text-xs font-medium">{selectedUser.businessType || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Industry</span>
+                      <span className="text-xs font-medium">{selectedUser.industry || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Tier</span>
+                      <span className="text-xs font-medium">{selectedUser.tier || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">KYC Status</span>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        selectedUser.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
+                        selectedUser.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                        selectedUser.kycStatus === 'rejected' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {selectedUser.kycStatus || 'Unknown'}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="py-3 px-4">
+                  <CardTitle className="text-sm">Risk Indicators</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2 px-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Chargebacks</span>
+                      <Badge variant={selectedUser.chargebacks && selectedUser.chargebacks > 0 ? "destructive" : "secondary"}>{selectedUser.chargebacks || 0}</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Complaints</span>
+                      <Badge variant={selectedUser.complaints && selectedUser.complaints > 0 ? "destructive" : "secondary"}>{selectedUser.complaints || 0}</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Transaction Velocity</span>
+                      <Badge variant={
+                        selectedUser.transactionVelocity === 'high' ? "destructive" : 
+                        selectedUser.transactionVelocity === 'medium' ? "outline" : "secondary"
+                      }>
+                        {selectedUser.transactionVelocity || 'Normal'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs text-muted-foreground">Unusual Activity</span>
+                      <Badge variant={selectedUser.unusualActivity ? "destructive" : "secondary"}>
+                        {selectedUser.unusualActivity ? 'Detected' : 'None'}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Risk Breakdown */}
+            <div className="mb-6">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowRiskFactors(!showRiskFactors)}
+                className="mb-4"
+              >
+                {showRiskFactors ? 'Hide' : 'Show'} Risk Factor Breakdown
+              </Button>
+              
+              {showRiskFactors && selectedUser.riskFactors && (
+                <div className="space-y-3 border rounded-md p-4">
+                  <h3 className="text-sm font-medium mb-2">Risk Factor Contributions</h3>
+                  
+                  <div className="space-y-2">
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-xs">Account Age</span>
+                        <span className="text-xs font-medium">{selectedUser.riskFactors.accountAge || 0}/25</span>
+                      </div>
+                      <Progress value={selectedUser.riskFactors.accountAge} max={25} className="h-1.5" />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-xs">Transaction Pattern</span>
+                        <span className="text-xs font-medium">{selectedUser.riskFactors.transactionPattern || 0}/25</span>
+                      </div>
+                      <Progress value={selectedUser.riskFactors.transactionPattern} max={25} className="h-1.5" />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-xs">Chargebacks</span>
+                        <span className="text-xs font-medium">{selectedUser.riskFactors.chargebacksScore || 0}/20</span>
+                      </div>
+                      <Progress value={selectedUser.riskFactors.chargebacksScore} max={20} className="h-1.5" />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-xs">Complaints</span>
+                        <span className="text-xs font-medium">{selectedUser.riskFactors.complaintsScore || 0}/10</span>
+                      </div>
+                      <Progress value={selectedUser.riskFactors.complaintsScore} max={10} className="h-1.5" />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-xs">KYC Status</span>
+                        <span className="text-xs font-medium">{selectedUser.riskFactors.kycScore || 0}/10</span>
+                      </div>
+                      <Progress value={selectedUser.riskFactors.kycScore} max={10} className="h-1.5" />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-xs">Industry Risk</span>
+                        <span className="text-xs font-medium">{selectedUser.riskFactors.industryScore || 0}/10</span>
+                      </div>
+                      <Progress value={selectedUser.riskFactors.industryScore} max={10} className="h-1.5" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Security & Access Patterns */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Security & Access Patterns</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader className="py-3 px-4">
+                    <CardTitle className="text-sm">Location Activity</CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-2 px-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-xs text-muted-foreground">Last Login IP</span>
+                        <span className="text-xs font-medium">{selectedUser.lastLoginIp || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-xs text-muted-foreground">Location Changes</span>
+                        <div className="flex items-center">
+                          <Globe className="h-3 w-3 mr-1 text-blue-600" />
+                          <span className="text-xs font-medium">{selectedUser.locationChanges || 0}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-xs text-muted-foreground">Device Changes</span>
+                        <div className="flex items-center">
+                          <Monitor className="h-3 w-3 mr-1 text-purple-600" />
+                          <span className="text-xs font-medium">{selectedUser.deviceChanges || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="py-3 px-4">
+                    <CardTitle className="text-sm">Activity Timeline</CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-2 px-4">
+                    <div className="flex items-center justify-center h-20">
+                      <p className="text-xs text-muted-foreground">
+                        Activity timeline will show transaction history when connected to database.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
             
-            <div className="space-y-4 mt-6">
-              <div className="border p-4 rounded-md">
-                <h3 className="font-medium mb-2">Risk Assessment</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  This section will show detailed risk factors when connected to the database.
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Risk Score</p>
-                    <p className="font-medium">--</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Risk Level</p>
-                    <p className="font-medium">--</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Flagged</p>
-                    <p className="font-medium">No</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Suspicious Activities</p>
-                    <p className="font-medium">--</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="border p-4 rounded-md">
-                <h3 className="font-medium mb-2">Transaction Summary</h3>
-                <p className="text-sm text-muted-foreground">
-                  Transaction data will be displayed here when connected to the database.
-                </p>
-              </div>
-              
-              <div className="flex justify-end gap-2 mt-4">
-                <Button variant="outline">Export User Data</Button>
-                <Button>View Full Profile</Button>
-              </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={() => setSelectedUser(null)}>
+                Cancel
+              </Button>
+              <Button variant="default">
+                View Full History
+              </Button>
+              <Button variant="destructive">
+                Flag User
+              </Button>
             </div>
           </div>
         </div>
