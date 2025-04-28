@@ -1,3 +1,4 @@
+
 // User types
 export interface User {
   id: string;
@@ -28,6 +29,25 @@ export interface User {
     industryScore: number; // Risk from industry type
   };
   riskHistory?: Array<{ date: string; score: number }>;
+  // New service usage fields
+  serviceUsage?: {
+    payin: boolean;
+    payout: boolean;
+    api: boolean;
+  };
+  // Service-specific risk scores
+  serviceRiskScores?: {
+    payin: number;
+    payout: number;
+    api: number;
+  };
+  // Service usage statistics
+  serviceStats?: {
+    payinVolume: number;
+    payoutVolume: number;
+    apiCallCount: number;
+    avgTransactionSize: number;
+  };
 }
 
 // Transaction types
@@ -42,6 +62,15 @@ export interface Transaction {
   createdAt: string;
   recipient?: string;
   sender?: string;
+  // New service category field
+  serviceCategory: 'payin' | 'payout' | 'api';
+  // Additional service-specific fields
+  processorName?: string;
+  processingFee?: number;
+  apiEndpoint?: string;
+  methodUsed?: string;
+  responseTime?: number;
+  failureReason?: string;
 }
 
 // Alert types
@@ -80,4 +109,8 @@ export interface DashboardStats {
   highRiskUsers?: number;
   totalChargebacks?: number;
   totalComplaints?: number;
+  // New service-specific stats
+  totalPayinVolume?: number;
+  totalPayoutVolume?: number;
+  totalApiCalls?: number;
 }

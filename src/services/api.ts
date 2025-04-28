@@ -45,6 +45,23 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 0,
       kycStatus: 'verified',
       phone: '+1-202-555-0123',
+      // New service usage data
+      serviceUsage: {
+        payin: true,
+        payout: true,
+        api: false
+      },
+      serviceRiskScores: {
+        payin: 25,
+        payout: 45,
+        api: 0
+      },
+      serviceStats: {
+        payinVolume: 28500,
+        payoutVolume: 12300,
+        apiCallCount: 0,
+        avgTransactionSize: 1250
+      }
     },
     {
       id: 'USER002',
@@ -61,6 +78,23 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 1,
       kycStatus: 'verified',
       phone: '+1-202-555-0189',
+      // New service usage data
+      serviceUsage: {
+        payin: true,
+        payout: false,
+        api: true
+      },
+      serviceRiskScores: {
+        payin: 10,
+        payout: 0,
+        api: 20
+      },
+      serviceStats: {
+        payinVolume: 54000,
+        payoutVolume: 0,
+        apiCallCount: 3450,
+        avgTransactionSize: 750
+      }
     },
     {
       id: 'USER003',
@@ -77,6 +111,23 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 0,
       kycStatus: 'pending',
       phone: '+1-202-555-0145',
+      // New service usage data
+      serviceUsage: {
+        payin: true,
+        payout: true,
+        api: true
+      },
+      serviceRiskScores: {
+        payin: 20,
+        payout: 15,
+        api: 30
+      },
+      serviceStats: {
+        payinVolume: 12000,
+        payoutVolume: 8500,
+        apiCallCount: 980,
+        avgTransactionSize: 425
+      }
     },
     {
       id: 'USER004',
@@ -93,6 +144,23 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 2,
       kycStatus: 'verified',
       phone: '+1-202-555-0198',
+      // New service usage data
+      serviceUsage: {
+        payin: true,
+        payout: false,
+        api: false
+      },
+      serviceRiskScores: {
+        payin: 75,
+        payout: 0,
+        api: 0
+      },
+      serviceStats: {
+        payinVolume: 87500,
+        payoutVolume: 0,
+        apiCallCount: 0,
+        avgTransactionSize: 650
+      }
     },
     {
       id: 'USER005',
@@ -109,6 +177,23 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 1,
       kycStatus: 'rejected',
       phone: '+1-202-555-0177',
+      // New service usage data
+      serviceUsage: {
+        payin: true,
+        payout: true,
+        api: true
+      },
+      serviceRiskScores: {
+        payin: 60,
+        payout: 70,
+        api: 90
+      },
+      serviceStats: {
+        payinVolume: 125000,
+        payoutVolume: 95000,
+        apiCallCount: 12500,
+        avgTransactionSize: 8500
+      }
     },
   ];
   
@@ -128,8 +213,11 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       currency: 'USD',
       status: 'completed',
       type: 'deposit',
-      description: 'Monthly salary',
+      description: 'Monthly salary deposit',
       createdAt: '2023-04-01T10:00:00Z',
+      serviceCategory: 'payin',
+      processorName: 'Stripe',
+      processingFee: 31.25
     },
     {
       id: 'TX002',
@@ -138,8 +226,11 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       currency: 'USD',
       status: 'completed',
       type: 'withdrawal',
-      description: 'Grocery shopping',
+      description: 'Grocery shopping withdrawal',
       createdAt: '2023-04-02T15:30:00Z',
+      serviceCategory: 'payout',
+      recipient: 'Local Market',
+      methodUsed: 'ACH Transfer'
     },
     {
       id: 'TX003',
@@ -148,10 +239,13 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       currency: 'USD',
       status: 'pending',
       type: 'transfer',
-      description: 'Transfer to savings',
+      description: 'Transfer to savings account',
       createdAt: '2023-04-03T09:45:00Z',
       recipient: 'Savings Account',
       sender: 'Checking Account',
+      serviceCategory: 'api',
+      apiEndpoint: '/api/transfers',
+      responseTime: 320
     },
     {
       id: 'TX004',
@@ -160,8 +254,11 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       currency: 'USD',
       status: 'completed',
       type: 'withdrawal',
-      description: 'Online purchase',
+      description: 'Online purchase payment',
       createdAt: '2023-04-04T11:20:00Z',
+      serviceCategory: 'payout',
+      recipient: 'Amazon',
+      methodUsed: 'Virtual Card'
     },
     {
       id: 'TX005',
@@ -174,6 +271,9 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       createdAt: '2023-04-05T16:15:00Z',
       recipient: 'External Account',
       sender: 'Main Account',
+      serviceCategory: 'payout',
+      methodUsed: 'SWIFT',
+      failureReason: 'Insufficient verification'
     },
     {
       id: 'TX006',
@@ -182,8 +282,11 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       currency: 'USD',
       status: 'completed',
       type: 'deposit',
-      description: 'Business funding',
+      description: 'Business funding deposit',
       createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+      serviceCategory: 'payin',
+      processorName: 'PayPal',
+      processingFee: 145.00
     },
     {
       id: 'TX007',
@@ -192,8 +295,11 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       currency: 'USD',
       status: 'completed',
       type: 'withdrawal',
-      description: 'Bulk withdrawal',
+      description: 'Bulk supplier payment',
       createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+      serviceCategory: 'payout',
+      recipient: 'Wholesale Supplier Inc.',
+      methodUsed: 'Bank Transfer'
     },
     {
       id: 'TX008',
@@ -204,8 +310,64 @@ export const getTransactions = async (): Promise<Transaction[]> => {
       type: 'transfer',
       description: 'Large value transfer',
       createdAt: new Date().toISOString(), // Today
-      recipient: 'External Account',
+      recipient: 'Investment Account',
       sender: 'Main Account',
+      serviceCategory: 'api',
+      apiEndpoint: '/api/investment-transfer',
+      responseTime: 540
+    },
+    {
+      id: 'TX009',
+      userId: 'USER003',
+      amount: 750.00,
+      currency: 'USD',
+      status: 'completed',
+      type: 'deposit',
+      description: 'Client payment received',
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+      serviceCategory: 'payin',
+      processorName: 'Square',
+      processingFee: 22.50
+    },
+    {
+      id: 'TX010',
+      userId: 'USER005',
+      amount: 12500.00,
+      currency: 'USD',
+      status: 'completed',
+      type: 'deposit',
+      description: 'Major client payment',
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+      serviceCategory: 'api',
+      apiEndpoint: '/api/batch-processing',
+      responseTime: 890
+    },
+    {
+      id: 'TX011',
+      userId: 'USER002',
+      amount: 1845.75,
+      currency: 'USD',
+      status: 'completed',
+      type: 'deposit',
+      description: 'Monthly subscription payments',
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
+      serviceCategory: 'api',
+      apiEndpoint: '/api/batch-subscriptions',
+      responseTime: 675
+    },
+    {
+      id: 'TX012',
+      userId: 'USER001',
+      amount: 325.50,
+      currency: 'USD',
+      status: 'failed',
+      type: 'withdrawal',
+      description: 'Vendor payment',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
+      serviceCategory: 'payout',
+      recipient: 'Office Supplies Co.',
+      methodUsed: 'ACH Transfer',
+      failureReason: 'Invalid account information'
     },
   ];
   

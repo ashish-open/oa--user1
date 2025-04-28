@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '@/services/api';
@@ -29,15 +28,14 @@ import { Label } from '@/components/ui/label';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Progress } from "@/components/ui/progress";
 import { User } from '@/types';
+import ServiceUsageSection from '@/components/users/ServiceUsageSection';
 
-// Risk score threshold constants
 const RISK_THRESHOLDS = {
   LOW: 30,
   MEDIUM: 60
 };
 
 const Users: React.FC = () => {
-  // Enhanced filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [searchField, setSearchField] = useState<string>('all');
   const [roleFilter, setRoleFilter] = useState<string>('all');
@@ -50,13 +48,11 @@ const Users: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showRiskFactors, setShowRiskFactors] = useState(false);
   
-  // Fetch users
   const { data: users, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: getUsers,
   });
 
-  // Calculate risk level based on risk score
   const getRiskLevel = (score?: number): 'low' | 'medium' | 'high' => {
     if (score === undefined) return 'medium';
     if (score < RISK_THRESHOLDS.LOW) return 'low';
@@ -64,7 +60,6 @@ const Users: React.FC = () => {
     return 'high';
   };
 
-  // Get color classes for risk levels
   const getRiskColor = (level: 'low' | 'medium' | 'high') => {
     switch (level) {
       case 'high': return 'bg-red-100 text-red-800 border-red-200';
@@ -74,7 +69,6 @@ const Users: React.FC = () => {
     }
   };
 
-  // Get icon for risk levels
   const getRiskIcon = (level: 'low' | 'medium' | 'high') => {
     switch (level) {
       case 'high': return <AlertTriangle className="h-4 w-4 text-red-600" />;
@@ -84,7 +78,6 @@ const Users: React.FC = () => {
     }
   };
 
-  // Enhanced filter users with multiple fields
   const filteredUsers = users
     ? users.filter((user) => {
         const searchValue = searchTerm.toLowerCase();
@@ -104,7 +97,6 @@ const Users: React.FC = () => {
         
         const matchesRole = roleFilter === 'all' || user.role === roleFilter;
         
-        // Calculate account age to filter by it
         const accountAge = Math.floor(
           (new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)
         );
@@ -115,17 +107,13 @@ const Users: React.FC = () => {
           accountAgeFilter === 'recent' ? accountAge > 30 && accountAge <= 90 :
           accountAgeFilter === 'established' ? accountAge > 90 : true;
           
-        // Calculate risk level for filtering
         const riskLevel = getRiskLevel(user.riskScore);
         const matchesRiskLevel = riskFilter === 'all' || riskFilter === riskLevel;
         
-        // Industry filter
         const matchesIndustry = industryFilter === 'all' || user.industry === industryFilter;
         
-        // Tier filter
         const matchesTier = tierFilter === 'all' || user.tier === tierFilter;
         
-        // KYC status filter
         const matchesKycStatus = kycStatusFilter === 'all' || user.kycStatus === kycStatusFilter;
         
         return matchesSearch && matchesRole && matchesAccountAge && matchesRiskLevel && 
@@ -133,17 +121,14 @@ const Users: React.FC = () => {
       })
     : [];
 
-  // Show detailed user view
   const viewUserDetails = (user: User) => {
     setSelectedUser(user);
   };
-  
-  // Get all available industries from users
+
   const availableIndustries = users 
     ? [...new Set(users.filter(user => user.industry).map(user => user.industry))] 
     : [];
-    
-  // Get all available tiers from users
+
   const availableTiers = users 
     ? [...new Set(users.filter(user => user.tier).map(user => user.tier))] 
     : [];
@@ -183,7 +168,6 @@ const Users: React.FC = () => {
           </CardHeader>
 
           <CardContent>
-            {/* Enhanced Search Filters */}
             <div className="mb-6 space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
@@ -273,7 +257,6 @@ const Users: React.FC = () => {
                 </div>
               </div>
               
-              {/* Additional Filters */}
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="industry-filter">Industry</Label>
@@ -360,12 +343,10 @@ const Users: React.FC = () => {
                             (new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)
                           );
                           
-                          // Get risk level from score
                           const riskLevel = getRiskLevel(user.riskScore);
                           const riskIcon = getRiskIcon(riskLevel);
                           const riskColor = getRiskColor(riskLevel);
                           
-                          // KYC status color
                           const kycStatusColor = user.kycStatus === 'verified' 
                             ? 'bg-green-100 text-green-800' 
                             : user.kycStatus === 'pending'
@@ -465,7 +446,6 @@ const Users: React.FC = () => {
                         (new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)
                       );
                       
-                      // Get risk level from score
                       const riskLevel = getRiskLevel(user.riskScore);
                       const riskIcon = riskLevel === 'high' ? 
                         <AlertTriangle className="h-5 w-5 text-red-600" /> : 
@@ -633,7 +613,6 @@ const Users: React.FC = () => {
         </Card>
       </Tabs>
 
-      {/* Enhanced User Risk Profile Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedUser(null)}>
           <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
@@ -644,32 +623,6 @@ const Users: React.FC = () => {
               </Button>
             </div>
             
-            {/* Risk Score Overview */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium">Risk Score</h3>
-                <div className="flex items-center gap-2">
-                  <span className={`text-sm font-bold px-3 py-1 rounded-full ${
-                    getRiskColor(getRiskLevel(selectedUser.riskScore))
-                  }`}>
-                    {selectedUser.riskScore || 'N/A'}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {getRiskLevel(selectedUser.riskScore).toUpperCase()} RISK
-                  </span>
-                </div>
-              </div>
-              <Progress 
-                value={selectedUser.riskScore} 
-                max={100}
-                className={`h-3 mt-2 ${
-                  getRiskLevel(selectedUser.riskScore) === 'high' ? 'bg-red-100' : 
-                  getRiskLevel(selectedUser.riskScore) === 'medium' ? 'bg-yellow-100' : 
-                  'bg-green-100'
-                }`}
-              />
-            </div>
-
             <div className="grid grid-cols-3 gap-4 mb-6">
               <Card>
                 <CardHeader className="py-3 px-4">
@@ -720,8 +673,7 @@ const Users: React.FC = () => {
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                         selectedUser.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
                         selectedUser.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                        selectedUser.kycStatus === 'rejected' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
+                        'bg-red-100 text-red-800'
                       }`}>
                         {selectedUser.kycStatus || 'Unknown'}
                       </span>
@@ -764,7 +716,8 @@ const Users: React.FC = () => {
               </Card>
             </div>
             
-            {/* Risk Breakdown */}
+            <ServiceUsageSection user={selectedUser} />
+            
             <div className="mb-6">
               <Button 
                 variant="outline" 
@@ -832,7 +785,6 @@ const Users: React.FC = () => {
               )}
             </div>
             
-            {/* Security & Access Patterns */}
             <div className="mb-6">
               <h3 className="text-lg font-medium mb-3">Security & Access Patterns</h3>
               <div className="grid grid-cols-2 gap-4">
