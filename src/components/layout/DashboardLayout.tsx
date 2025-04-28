@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search } from 'lucide-react';
+import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface DashboardLayoutProps {
@@ -26,26 +27,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
       <div className="min-h-screen flex w-full">
         <Sidebar>
           <div className="p-4">
-            <h2 className="text-xl font-bold">Risk Management Dashboard</h2>
+            <div className="flex items-center space-x-2">
+              <Shield className="h-6 w-6 text-red-500" />
+              <h2 className="text-xl font-bold">Risk Management</h2>
+            </div>
           </div>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Main</SidebarGroupLabel>
+              <SidebarGroupLabel>Risk Operations</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild onClick={() => navigate('/')}>
                       <button className="w-full flex items-center">
                         <LayoutDashboard className="mr-2 h-5 w-5" />
-                        <span>Dashboard</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild onClick={() => navigate('/transactions')}>
-                      <button className="w-full flex items-center">
-                        <ArrowLeftRight className="mr-2 h-5 w-5" />
-                        <span>Transactions</span>
+                        <span>Risk Dashboard</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -53,7 +49,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                     <SidebarMenuButton asChild onClick={() => navigate('/users')}>
                       <button className="w-full flex items-center">
                         <Users className="mr-2 h-5 w-5" />
-                        <span>Users</span>
+                        <span>User Investigation</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild onClick={() => navigate('/transactions')}>
+                      <button className="w-full flex items-center">
+                        <ArrowLeftRight className="mr-2 h-5 w-5" />
+                        <span>Transaction Analysis</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -61,7 +65,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                     <SidebarMenuButton asChild onClick={() => navigate('/alerts')}>
                       <button className="w-full flex items-center">
                         <AlertTriangle className="mr-2 h-5 w-5" />
-                        <span>Alerts</span>
+                        <span>Risk Alerts</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -69,7 +73,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                     <SidebarMenuButton asChild onClick={() => navigate('/tickets')}>
                       <button className="w-full flex items-center">
                         <BarChart className="mr-2 h-5 w-5" />
-                        <span>Support Tickets</span>
+                        <span>Investigation Cases</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
