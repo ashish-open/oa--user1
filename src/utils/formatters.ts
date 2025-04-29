@@ -44,6 +44,11 @@ export const formatPercent = (value: number) => {
  * Safely format a number to locale string
  */
 export const safeFormatNumber = (value: number | undefined | null) => {
-  return value !== undefined && value !== null ? value.toLocaleString() : '0';
+  if (value === undefined || value === null) return '0';
+  try {
+    return value.toLocaleString();
+  } catch (error) {
+    console.error('Error formatting number:', error);
+    return '0';
+  }
 };
-
