@@ -48,6 +48,20 @@ export interface User {
     apiCallCount: number;
     avgTransactionSize: number;
   };
+  // KYC-specific fields
+  kycDetails?: {
+    verifiedAt?: string;
+    verifiedBy?: string;
+    verificationMethod?: 'automated' | 'manual';
+    rejectionReason?: string;
+    documents?: Array<{
+      type: 'id' | 'address' | 'business';
+      status: 'approved' | 'rejected' | 'pending';
+      uploadedAt: string;
+    }>;
+    pgPartner?: 'Stripe' | 'PayPal' | 'Adyen';
+    midStatus?: 'pending' | 'active' | 'rejected';
+  };
 }
 
 // Transaction types
@@ -114,3 +128,22 @@ export interface DashboardStats {
   totalPayoutVolume?: number;
   totalApiCalls?: number;
 }
+
+// KYC stats
+export interface KycStats {
+  totalOnboardings: number;
+  dailyOnboardings: number;
+  monthlyOnboardings: number;
+  verifiedUsers: number;
+  pendingUsers: number;
+  rejectedUsers: number;
+  averageVerificationTime: number;
+  pgPartnerDistribution: {
+    [partner: string]: {
+      pending: number;
+      completed: number;
+      rejected: number;
+    };
+  };
+}
+

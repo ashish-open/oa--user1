@@ -14,6 +14,7 @@ import Transactions from "./pages/Transactions";
 import Users from "./pages/Users";
 import Alerts from "./pages/Alerts";
 import Tickets from "./pages/Tickets";
+import KycDashboard from "./pages/KycDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -60,6 +61,11 @@ const App = () => (
             <Route path="/tickets" element={
               <PrivateRoute>
                 <Tickets />
+              </PrivateRoute>
+            } />
+            <Route path="/kyc-dashboard" element={
+              <PrivateRoute>
+                <KycDashboard />
               </PrivateRoute>
             } />
             

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket } from 'lucide-react';
+import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 
@@ -75,6 +75,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                       <button className="w-full flex items-center">
                         <Ticket className="mr-2 h-5 w-5" />
                         <span>Support Tickets</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* New KYC Team Section */}
+            <SidebarGroup>
+              <SidebarGroupLabel>KYC Team</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild onClick={() => navigate('/kyc-dashboard')}>
+                      <button className="w-full flex items-center">
+                        <CheckCircle className="mr-2 h-5 w-5" />
+                        <span>KYC Dashboard</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
