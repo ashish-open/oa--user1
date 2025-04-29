@@ -68,37 +68,64 @@ export function KycPerformanceMetrics({ dateRange }: KycPerformanceMetricsProps)
   );
 
   return (
-    <div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div className="flex flex-col h-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="text-sm font-medium text-muted-foreground">Avg. Verifications Per Day</div>
             <div className="text-2xl font-bold">{averageVerificationCount}</div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="text-sm font-medium text-muted-foreground">Avg. Verification Time</div>
             <div className="text-2xl font-bold">{averageVerificationTime} minutes</div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="text-sm font-medium text-muted-foreground">Avg. Rejection Rate</div>
             <div className="text-2xl font-bold">{averageRejectionRate}%</div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="h-[300px]">
+      <div className="h-[350px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={performanceData}>
-            <CartesianGrid strokeDasharray="3 3" />
+          <LineChart 
+            data={performanceData}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 30,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis 
               dataKey="date" 
               tickFormatter={(date) => formatDate(date)}
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={true}
+              padding={{ left: 10, right: 10 }}
             />
-            <YAxis />
+            <YAxis 
+              yAxisId="left"
+              orientation="left"
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+              domain={['dataMin - 5', 'dataMax + 5']}
+            />
+            <YAxis 
+              yAxisId="right"
+              orientation="right"
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+              domain={[0, 'dataMax + 2']}
+            />
             <Tooltip 
               labelFormatter={(date) => formatDate(date)}
               formatter={(value, name) => {
@@ -106,29 +133,44 @@ export function KycPerformanceMetrics({ dateRange }: KycPerformanceMetricsProps)
                 if (name === 'rejectionRate') return [`${value}%`, 'Rejection Rate'];
                 return [value, name === 'verificationCount' ? 'Verifications' : name];
               }}
+              contentStyle={{ 
+                backgroundColor: 'white', 
+                borderRadius: '8px', 
+                padding: '10px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+              }}
             />
-            <Legend />
+            <Legend 
+              wrapperStyle={{ paddingTop: '10px' }}
+              iconType="circle"
+            />
             <Line 
               type="monotone" 
               dataKey="verificationCount" 
               name="Verifications" 
               stroke="#3B82F6" 
               strokeWidth={2} 
-              activeDot={{ r: 8 }} 
+              activeDot={{ r: 8 }}
+              yAxisId="left" 
+              dot={{ r: 4 }}
             />
             <Line 
               type="monotone" 
               dataKey="avgVerificationTime" 
               name="Avg. Verification Time" 
               stroke="#10B981" 
-              strokeWidth={2} 
+              strokeWidth={2}
+              yAxisId="right"
+              dot={{ r: 4 }} 
             />
             <Line 
               type="monotone" 
               dataKey="rejectionRate" 
               name="Rejection Rate" 
               stroke="#EF4444" 
-              strokeWidth={2} 
+              strokeWidth={2}
+              yAxisId="right"
+              dot={{ r: 4 }} 
             />
           </LineChart>
         </ResponsiveContainer>

@@ -41,36 +41,55 @@ export function OnboardingMetrics({ period, dateRange }: OnboardingMetricsProps)
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <div className="flex justify-end mb-4">
         <Button variant="outline" size="sm" onClick={handleExport}>
           <Download className="mr-2 h-4 w-4" />
           Export Data
         </Button>
       </div>
-      <div className="h-[300px]">
+      <div className="h-[350px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
             margin={{
-              top: 5,
+              top: 20,
               right: 30,
               left: 20,
-              bottom: 5,
+              bottom: 30,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis 
               dataKey={period === 'daily' ? 'date' : 'name'} 
               tickFormatter={period === 'daily' ? ((date) => formatDate(date)) : undefined}
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={true}
+              padding={{ left: 10, right: 10 }}
             />
-            <YAxis />
+            <YAxis 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+            />
             <Tooltip 
               labelFormatter={(value) => period === 'daily' ? formatDate(value) : value}
               formatter={(value) => [`${value} users`, 'Onboardings']}
+              contentStyle={{ 
+                backgroundColor: 'white', 
+                borderRadius: '8px', 
+                padding: '10px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+              }}
             />
-            <Legend />
-            <Bar dataKey="onboardings" name="New Onboardings" fill="#4F46E5" />
+            <Legend wrapperStyle={{ paddingTop: '10px' }} />
+            <Bar 
+              dataKey="onboardings" 
+              name="New Onboardings" 
+              fill="#4F46E5" 
+              radius={[4, 4, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

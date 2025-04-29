@@ -17,28 +17,33 @@ export function KycStatusDistribution({ dateRange }: KycStatusDistributionProps)
   ];
 
   return (
-    <div className="h-[300px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={kycData}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius={80}
-            fill="#8884d8"
-            dataKey="value"
-            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-          >
-            {kycData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Legend />
-          <Tooltip formatter={(value) => [`${value} users`, 'Count']} />
-        </PieChart>
-      </ResponsiveContainer>
-      <div className="mt-4 grid grid-cols-3 gap-4">
+    <div className="flex flex-col h-full">
+      <div className="h-[350px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <Pie
+              data={kycData}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={90}
+              fill="#8884d8"
+              dataKey="value"
+              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            >
+              {kycData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+            <Tooltip 
+              formatter={(value) => [`${value} users`, 'Count']}
+              contentStyle={{ backgroundColor: 'white', borderRadius: '8px', padding: '10px' }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="mt-6 grid grid-cols-3 gap-4">
         {kycData.map((status) => (
           <Card key={status.name} className={`border-l-4`} style={{ borderLeftColor: status.color }}>
             <CardContent className="p-4">
