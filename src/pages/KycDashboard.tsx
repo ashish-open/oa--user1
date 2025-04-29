@@ -14,6 +14,9 @@ import { PgPartnerDistribution } from '@/components/kyc/PgPartnerDistribution';
 import { KycPerformanceMetrics } from '@/components/kyc/KycPerformanceMetrics';
 import { OnboardingMetrics } from '@/components/kyc/OnboardingMetrics';
 
+// Define the period type to match what OnboardingMetrics expects
+type PeriodType = 'daily' | 'monthly';
+
 const KycDashboard: React.FC = () => {
   // Date range state for filtering
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -22,7 +25,8 @@ const KycDashboard: React.FC = () => {
   });
 
   // Tab state for switching between daily/monthly views
-  const [activeTab, setActiveTab] = useState('daily');
+  // Update the type to match what OnboardingMetrics expects
+  const [activeTab, setActiveTab] = useState<PeriodType>('daily');
 
   return (
     <DashboardLayout title="KYC Dashboard">
@@ -66,7 +70,7 @@ const KycDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
               <span>Onboarding Metrics</span>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-[300px]">
+              <Tabs value={activeTab} onValueChange={(value: PeriodType) => setActiveTab(value)} className="w-[300px]">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="daily">Daily</TabsTrigger>
                   <TabsTrigger value="monthly">Monthly</TabsTrigger>
