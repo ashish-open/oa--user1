@@ -39,3 +39,11 @@ export const formatLargeNumber = (num: number) => {
 export const formatPercent = (value: number) => {
   return `${value.toFixed(1)}%`;
 };
+
+/**
+ * Safely format a number to locale string
+ */
+export const safeFormatNumber = (value: number | undefined | null) => {
+  return value !== undefined && value !== null ? value.toLocaleString() : '0';
+};
+

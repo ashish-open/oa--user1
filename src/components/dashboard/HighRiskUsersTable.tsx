@@ -60,7 +60,7 @@ const HighRiskUsersTable: React.FC = () => {
       toast({
         title: "Risk Assessment Complete",
         description: `Updated risk profile is now available for user ${userId}.`,
-        variant: "success",
+        variant: "default",
       });
     }, 2000);
   };

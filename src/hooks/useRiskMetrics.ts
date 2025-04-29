@@ -3,6 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { getUsers, getTransactions } from '@/services/api';
 import { User, Transaction } from '@/types';
 
+interface ServiceMetric {
+  userCount: number;
+  highRiskCount: number;
+  totalVolume?: number;
+  totalApiCalls?: number;
+}
+
+interface ServiceMetrics {
+  payin: ServiceMetric;
+  payout: ServiceMetric;
+  api: ServiceMetric;
+}
+
 export function useRiskMetrics() {
   const { data: users } = useQuery({
     queryKey: ['users'],
@@ -21,8 +34,26 @@ export function useRiskMetrics() {
   };
 
   // Calculate service-specific metrics
-  const getServiceMetrics = () => {
-    if (!users) return { payin: 0, payout: 0, api: 0 };
+  const getServiceMetrics = (): ServiceMetrics => {
+    if (!users) {
+      return {
+        payin: {
+          userCount: 0,
+          highRiskCount: 0,
+          totalVolume: 0,
+        },
+        payout: {
+          userCount: 0,
+          highRiskCount: 0,
+          totalVolume: 0,
+        },
+        api: {
+          userCount: 0,
+          highRiskCount: 0,
+          totalApiCalls: 0,
+        }
+      };
+    }
     
     const metrics = {
       payin: {
