@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +33,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
             </div>
           </div>
           <SidebarContent>
+            {/* KYC Team Section (Moved to Top) */}
+            <SidebarGroup>
+              <SidebarGroupLabel>KYC Team</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild onClick={() => navigate('/kyc-dashboard')}>
+                      <button className="w-full flex items-center">
+                        <CheckCircle className="mr-2 h-5 w-5" />
+                        <span>KYC Dashboard</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Risk Operations Section (Moved Below KYC Team) */}
             <SidebarGroup>
               <SidebarGroupLabel>Risk Operations</SidebarGroupLabel>
               <SidebarGroupContent>
@@ -82,23 +99,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {/* New KYC Team Section */}
-            <SidebarGroup>
-              <SidebarGroupLabel>KYC Team</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild onClick={() => navigate('/kyc-dashboard')}>
-                      <button className="w-full flex items-center">
-                        <CheckCircle className="mr-2 h-5 w-5" />
-                        <span>KYC Dashboard</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-            
+            {/* Admin Tools Section (Unchanged Position) */}
             <SidebarGroup>
               <SidebarGroupLabel>Admin Tools</SidebarGroupLabel>
               <SidebarGroupContent>
@@ -116,17 +117,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
             </SidebarGroup>
           </SidebarContent>
           <div className="mt-auto p-4">
-            {user && (
-              <div className="flex flex-col space-y-2">
-                <div className="text-sm text-gray-500">
-                  Signed in as <span className="font-semibold">{user.email}</span>
-                </div>
-                <Button variant="outline" size="sm" onClick={logout}>
-                  Sign Out
-                </Button>
-              </div>
-            )}
-          </div>
+  {user && (
+    <div className="flex flex-col space-y-2">
+      <div className="text-sm text-gray-500">
+        Signed in as <span className="font-semibold">{user.email}</span>
+      </div>
+      <Button variant="outline" size="sm" onClick={logout}>
+        Sign Out
+      </Button>
+    </div>
+  )}
+</div>
         </Sidebar>
 
         <main className="flex-1 flex flex-col min-h-screen">

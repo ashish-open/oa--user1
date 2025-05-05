@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DateRange } from 'react-day-picker';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -14,23 +13,23 @@ interface OnboardingMetricsProps {
 export function OnboardingMetrics({ period, dateRange }: OnboardingMetricsProps) {
   // Sample data - in a real app, this would come from an API call
   const dailyData = [
-    { date: '2025-04-22', onboardings: 42 },
-    { date: '2025-04-23', onboardings: 48 },
-    { date: '2025-04-24', onboardings: 35 },
-    { date: '2025-04-25', onboardings: 52 },
-    { date: '2025-04-26', onboardings: 30 },
-    { date: '2025-04-27', onboardings: 25 },
-    { date: '2025-04-28', onboardings: 45 },
-    { date: '2025-04-29', onboardings: 50 }
+    { date: '2025-04-22', onboardings: 42, activations: 30 },
+    { date: '2025-04-23', onboardings: 48, activations: 35 },
+    { date: '2025-04-24', onboardings: 35, activations: 25 },
+    { date: '2025-04-25', onboardings: 52, activations: 40 },
+    { date: '2025-04-26', onboardings: 30, activations: 20 },
+    { date: '2025-04-27', onboardings: 25, activations: 15 },
+    { date: '2025-04-28', onboardings: 45, activations: 38 },
+    { date: '2025-04-29', onboardings: 50, activations: 42 },
   ];
 
   const monthlyData = [
-    { date: '2024-11', onboardings: 850, name: 'Nov' },
-    { date: '2024-12', onboardings: 920, name: 'Dec' },
-    { date: '2025-01', onboardings: 780, name: 'Jan' },
-    { date: '2025-02', onboardings: 880, name: 'Feb' },
-    { date: '2025-03', onboardings: 940, name: 'Mar' },
-    { date: '2025-04', onboardings: 1284, name: 'Apr' }
+    { date: '2024-11', onboardings: 850, activations: 700, name: 'Nov' },
+    { date: '2024-12', onboardings: 920, activations: 750, name: 'Dec' },
+    { date: '2025-01', onboardings: 780, activations: 650, name: 'Jan' },
+    { date: '2025-02', onboardings: 880, activations: 720, name: 'Feb' },
+    { date: '2025-03', onboardings: 940, activations: 800, name: 'Mar' },
+    { date: '2025-04', onboardings: 1284, activations: 1100, name: 'Apr' },
   ];
 
   const data = period === 'daily' ? dailyData : monthlyData;
@@ -75,7 +74,7 @@ export function OnboardingMetrics({ period, dateRange }: OnboardingMetricsProps)
             />
             <Tooltip 
               labelFormatter={(value) => period === 'daily' ? formatDate(value) : value}
-              formatter={(value) => [`${value} users`, 'Onboardings']}
+              formatter={(value, name) => [`${value} users`, name]}
               contentStyle={{ 
                 backgroundColor: 'white', 
                 borderRadius: '8px', 
@@ -88,6 +87,12 @@ export function OnboardingMetrics({ period, dateRange }: OnboardingMetricsProps)
               dataKey="onboardings" 
               name="New Onboardings" 
               fill="#4F46E5" 
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar 
+              dataKey="activations" 
+              name="Activations" 
+              fill="#22C55E" 
               radius={[4, 4, 0, 0]}
             />
           </BarChart>
