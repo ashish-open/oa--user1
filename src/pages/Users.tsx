@@ -29,6 +29,7 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Progress } from "@/components/ui/progress";
 import { User } from '@/types';
 import ServiceUsageSection from '@/components/users/ServiceUsageSection';
+import UserKycDashboard from '@/components/users/UserKycDashboard';
 
 const RISK_THRESHOLDS = {
   LOW: 30,
@@ -47,6 +48,7 @@ const Users: React.FC = () => {
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showRiskFactors, setShowRiskFactors] = useState(false);
+  const [activeUserTab, setActiveUserTab] = useState<'risk' | 'kyc'>('risk');
   
   const { data: users, isLoading } = useQuery({
     queryKey: ['users'],
@@ -617,219 +619,232 @@ const Users: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedUser(null)}>
           <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Risk Profile: {selectedUser.firstName} {selectedUser.lastName}</h2>
+              <h2 className="text-xl font-bold">User Profile: {selectedUser.firstName} {selectedUser.lastName}</h2>
               <Button variant="ghost" size="sm" onClick={() => setSelectedUser(null)}>
                 Close
               </Button>
             </div>
             
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <Card>
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="text-sm">Personal Info</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2 px-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">ID</span>
-                      <span className="text-xs font-medium">{selectedUser.id}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Email</span>
-                      <span className="text-xs font-medium">{selectedUser.email}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Phone</span>
-                      <span className="text-xs font-medium">{selectedUser.phone || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Created</span>
-                      <span className="text-xs font-medium">{new Date(selectedUser.createdAt).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <Tabs value={activeUserTab} onValueChange={(val) => setActiveUserTab(val as 'risk' | 'kyc')}>
+              <TabsList className="mb-4">
+                <TabsTrigger value="risk">Risk Profile</TabsTrigger>
+                <TabsTrigger value="kyc">KYC Dashboard</TabsTrigger>
+              </TabsList>
               
-              <Card>
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="text-sm">Business Info</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2 px-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Business Type</span>
-                      <span className="text-xs font-medium">{selectedUser.businessType || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Industry</span>
-                      <span className="text-xs font-medium">{selectedUser.industry || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Tier</span>
-                      <span className="text-xs font-medium">{selectedUser.tier || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">KYC Status</span>
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                        selectedUser.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
-                        selectedUser.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {selectedUser.kycStatus || 'Unknown'}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="py-3 px-4">
-                  <CardTitle className="text-sm">Risk Indicators</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2 px-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Chargebacks</span>
-                      <Badge variant={selectedUser.chargebacks && selectedUser.chargebacks > 0 ? "destructive" : "secondary"}>{selectedUser.chargebacks || 0}</Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Complaints</span>
-                      <Badge variant={selectedUser.complaints && selectedUser.complaints > 0 ? "destructive" : "secondary"}>{selectedUser.complaints || 0}</Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Transaction Velocity</span>
-                      <Badge variant={
-                        selectedUser.transactionVelocity === 'high' ? "destructive" : 
-                        selectedUser.transactionVelocity === 'medium' ? "outline" : "secondary"
-                      }>
-                        {selectedUser.transactionVelocity || 'Normal'}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-muted-foreground">Unusual Activity</span>
-                      <Badge variant={selectedUser.unusualActivity ? "destructive" : "secondary"}>
-                        {selectedUser.unusualActivity ? 'Detected' : 'None'}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <ServiceUsageSection user={selectedUser} />
-            
-            <div className="mb-6">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setShowRiskFactors(!showRiskFactors)}
-                className="mb-4"
-              >
-                {showRiskFactors ? 'Hide' : 'Show'} Risk Factor Breakdown
-              </Button>
-              
-              {showRiskFactors && selectedUser.riskFactors && (
-                <div className="space-y-3 border rounded-md p-4">
-                  <h3 className="text-sm font-medium mb-2">Risk Factor Contributions</h3>
+              <TabsContent value="risk">
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <Card>
+                    <CardHeader className="py-3 px-4">
+                      <CardTitle className="text-sm">Personal Info</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-2 px-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">ID</span>
+                          <span className="text-xs font-medium">{selectedUser.id}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Email</span>
+                          <span className="text-xs font-medium">{selectedUser.email}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Phone</span>
+                          <span className="text-xs font-medium">{selectedUser.phone || 'N/A'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Created</span>
+                          <span className="text-xs font-medium">{new Date(selectedUser.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                   
-                  <div className="space-y-2">
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-xs">Account Age</span>
-                        <span className="text-xs font-medium">{selectedUser.riskFactors.accountAge || 0}/25</span>
+                  <Card>
+                    <CardHeader className="py-3 px-4">
+                      <CardTitle className="text-sm">Business Info</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-2 px-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Business Type</span>
+                          <span className="text-xs font-medium">{selectedUser.businessType || 'N/A'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Industry</span>
+                          <span className="text-xs font-medium">{selectedUser.industry || 'N/A'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Tier</span>
+                          <span className="text-xs font-medium">{selectedUser.tier || 'N/A'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">KYC Status</span>
+                          <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                            selectedUser.kycStatus === 'verified' ? 'bg-green-100 text-green-800' : 
+                            selectedUser.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {selectedUser.kycStatus || 'Unknown'}
+                          </span>
+                        </div>
                       </div>
-                      <Progress value={selectedUser.riskFactors.accountAge} max={25} className="h-1.5" />
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="py-3 px-4">
+                      <CardTitle className="text-sm">Risk Indicators</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-2 px-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Chargebacks</span>
+                          <Badge variant={selectedUser.chargebacks && selectedUser.chargebacks > 0 ? "destructive" : "secondary"}>{selectedUser.chargebacks || 0}</Badge>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Complaints</span>
+                          <Badge variant={selectedUser.complaints && selectedUser.complaints > 0 ? "destructive" : "secondary"}>{selectedUser.complaints || 0}</Badge>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Transaction Velocity</span>
+                          <Badge variant={
+                            selectedUser.transactionVelocity === 'high' ? "destructive" : 
+                            selectedUser.transactionVelocity === 'medium' ? "outline" : "secondary"
+                          }>
+                            {selectedUser.transactionVelocity || 'Normal'}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-muted-foreground">Unusual Activity</span>
+                          <Badge variant={selectedUser.unusualActivity ? "destructive" : "secondary"}>
+                            {selectedUser.unusualActivity ? 'Detected' : 'None'}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <ServiceUsageSection user={selectedUser} />
+                
+                <div className="mb-6">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setShowRiskFactors(!showRiskFactors)}
+                    className="mb-4"
+                  >
+                    {showRiskFactors ? 'Hide' : 'Show'} Risk Factor Breakdown
+                  </Button>
+                  
+                  {showRiskFactors && selectedUser.riskFactors && (
+                    <div className="space-y-3 border rounded-md p-4">
+                      <h3 className="text-sm font-medium mb-2">Risk Factor Contributions</h3>
+                      
+                      <div className="space-y-2">
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Account Age</span>
+                            <span className="text-xs font-medium">{selectedUser.riskFactors.accountAge || 0}/25</span>
+                          </div>
+                          <Progress value={selectedUser.riskFactors.accountAge} max={25} className="h-1.5" />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Transaction Pattern</span>
+                            <span className="text-xs font-medium">{selectedUser.riskFactors.transactionPattern || 0}/25</span>
+                          </div>
+                          <Progress value={selectedUser.riskFactors.transactionPattern} max={25} className="h-1.5" />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Chargebacks</span>
+                            <span className="text-xs font-medium">{selectedUser.riskFactors.chargebacksScore || 0}/20</span>
+                          </div>
+                          <Progress value={selectedUser.riskFactors.chargebacksScore} max={20} className="h-1.5" />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Complaints</span>
+                            <span className="text-xs font-medium">{selectedUser.riskFactors.complaintsScore || 0}/10</span>
+                          </div>
+                          <Progress value={selectedUser.riskFactors.complaintsScore} max={10} className="h-1.5" />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-xs">KYC Status</span>
+                            <span className="text-xs font-medium">{selectedUser.riskFactors.kycScore || 0}/10</span>
+                          </div>
+                          <Progress value={selectedUser.riskFactors.kycScore} max={10} className="h-1.5" />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-xs">Industry Risk</span>
+                            <span className="text-xs font-medium">{selectedUser.riskFactors.industryScore || 0}/10</span>
+                          </div>
+                          <Progress value={selectedUser.riskFactors.industryScore} max={10} className="h-1.5" />
+                        </div>
+                      </div>
                     </div>
+                  )}
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-medium mb-3">Security & Access Patterns</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card>
+                      <CardHeader className="py-3 px-4">
+                        <CardTitle className="text-sm">Location Activity</CardTitle>
+                      </CardHeader>
+                      <CardContent className="py-2 px-4">
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-xs text-muted-foreground">Last Login IP</span>
+                            <span className="text-xs font-medium">{selectedUser.lastLoginIp || 'N/A'}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs text-muted-foreground">Location Changes</span>
+                            <div className="flex items-center">
+                              <Globe className="h-3 w-3 mr-1 text-blue-600" />
+                              <span className="text-xs font-medium">{selectedUser.locationChanges || 0}</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-xs text-muted-foreground">Device Changes</span>
+                            <div className="flex items-center">
+                              <Monitor className="h-3 w-3 mr-1 text-purple-600" />
+                              <span className="text-xs font-medium">{selectedUser.deviceChanges || 0}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                     
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-xs">Transaction Pattern</span>
-                        <span className="text-xs font-medium">{selectedUser.riskFactors.transactionPattern || 0}/25</span>
-                      </div>
-                      <Progress value={selectedUser.riskFactors.transactionPattern} max={25} className="h-1.5" />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-xs">Chargebacks</span>
-                        <span className="text-xs font-medium">{selectedUser.riskFactors.chargebacksScore || 0}/20</span>
-                      </div>
-                      <Progress value={selectedUser.riskFactors.chargebacksScore} max={20} className="h-1.5" />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-xs">Complaints</span>
-                        <span className="text-xs font-medium">{selectedUser.riskFactors.complaintsScore || 0}/10</span>
-                      </div>
-                      <Progress value={selectedUser.riskFactors.complaintsScore} max={10} className="h-1.5" />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-xs">KYC Status</span>
-                        <span className="text-xs font-medium">{selectedUser.riskFactors.kycScore || 0}/10</span>
-                      </div>
-                      <Progress value={selectedUser.riskFactors.kycScore} max={10} className="h-1.5" />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-xs">Industry Risk</span>
-                        <span className="text-xs font-medium">{selectedUser.riskFactors.industryScore || 0}/10</span>
-                      </div>
-                      <Progress value={selectedUser.riskFactors.industryScore} max={10} className="h-1.5" />
-                    </div>
+                    <Card>
+                      <CardHeader className="py-3 px-4">
+                        <CardTitle className="text-sm">Activity Timeline</CardTitle>
+                      </CardHeader>
+                      <CardContent className="py-2 px-4">
+                        <div className="flex items-center justify-center h-20">
+                          <p className="text-xs text-muted-foreground">
+                            Activity timeline will show transaction history when connected to database.
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
                 </div>
-              )}
-            </div>
-            
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Security & Access Patterns</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader className="py-3 px-4">
-                    <CardTitle className="text-sm">Location Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2 px-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-xs text-muted-foreground">Last Login IP</span>
-                        <span className="text-xs font-medium">{selectedUser.lastLoginIp || 'N/A'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-xs text-muted-foreground">Location Changes</span>
-                        <div className="flex items-center">
-                          <Globe className="h-3 w-3 mr-1 text-blue-600" />
-                          <span className="text-xs font-medium">{selectedUser.locationChanges || 0}</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-xs text-muted-foreground">Device Changes</span>
-                        <div className="flex items-center">
-                          <Monitor className="h-3 w-3 mr-1 text-purple-600" />
-                          <span className="text-xs font-medium">{selectedUser.deviceChanges || 0}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="py-3 px-4">
-                    <CardTitle className="text-sm">Activity Timeline</CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2 px-4">
-                    <div className="flex items-center justify-center h-20">
-                      <p className="text-xs text-muted-foreground">
-                        Activity timeline will show transaction history when connected to database.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+              </TabsContent>
+              
+              <TabsContent value="kyc">
+                <UserKycDashboard user={selectedUser} />
+              </TabsContent>
+            </Tabs>
             
             <div className="flex justify-end gap-2 mt-4">
               <Button variant="outline" onClick={() => setSelectedUser(null)}>

@@ -1,4 +1,3 @@
-
 // User types
 export interface User {
   id: string;
@@ -29,7 +28,7 @@ export interface User {
     industryScore: number; // Risk from industry type
   };
   riskHistory?: Array<{ date: string; score: number }>;
-  // New service usage fields
+  // Service usage fields
   serviceUsage?: {
     payin: boolean;
     payout: boolean;
@@ -111,6 +110,8 @@ export interface Ticket {
     name: string;
     email: string;
   };
+  tags?: string[]; // Added tags field
+  group?: string;  // Added group field
 }
 
 // Dashboard stats
@@ -146,4 +147,3 @@ export interface KycStats {
     };
   };
 }
-

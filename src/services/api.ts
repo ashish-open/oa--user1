@@ -45,7 +45,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 0,
       kycStatus: 'verified',
       phone: '+1-202-555-0123',
-      // New service usage data
+      // Service usage data
       serviceUsage: {
         payin: true,
         payout: true,
@@ -61,6 +61,31 @@ export const getUsers = async (): Promise<User[]> => {
         payoutVolume: 12300,
         apiCallCount: 0,
         avgTransactionSize: 1250
+      },
+      // KYC details
+      kycDetails: {
+        verifiedAt: '2023-02-10T14:30:00Z',
+        verifiedBy: 'compliance_team',
+        verificationMethod: 'manual',
+        documents: [
+          {
+            type: 'id',
+            status: 'approved',
+            uploadedAt: '2023-02-01T10:15:00Z'
+          },
+          {
+            type: 'address',
+            status: 'approved',
+            uploadedAt: '2023-02-01T10:20:00Z'
+          },
+          {
+            type: 'business',
+            status: 'approved',
+            uploadedAt: '2023-02-01T10:25:00Z'
+          }
+        ],
+        pgPartner: 'Stripe',
+        midStatus: 'active'
       }
     },
     {
@@ -78,7 +103,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 1,
       kycStatus: 'verified',
       phone: '+1-202-555-0189',
-      // New service usage data
+      // Service usage data
       serviceUsage: {
         payin: true,
         payout: false,
@@ -94,6 +119,26 @@ export const getUsers = async (): Promise<User[]> => {
         payoutVolume: 0,
         apiCallCount: 3450,
         avgTransactionSize: 750
+      },
+      // KYC details
+      kycDetails: {
+        verifiedAt: '2023-03-05T09:45:00Z',
+        verifiedBy: 'automated_system',
+        verificationMethod: 'automated',
+        documents: [
+          {
+            type: 'id',
+            status: 'approved',
+            uploadedAt: '2023-03-01T15:30:00Z'
+          },
+          {
+            type: 'address',
+            status: 'approved',
+            uploadedAt: '2023-03-01T15:35:00Z'
+          }
+        ],
+        pgPartner: 'PayPal',
+        midStatus: 'active'
       }
     },
     {
@@ -111,7 +156,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 0,
       kycStatus: 'pending',
       phone: '+1-202-555-0145',
-      // New service usage data
+      // Service usage data
       serviceUsage: {
         payin: true,
         payout: true,
@@ -127,6 +172,29 @@ export const getUsers = async (): Promise<User[]> => {
         payoutVolume: 8500,
         apiCallCount: 980,
         avgTransactionSize: 425
+      },
+      // KYC details
+      kycDetails: {
+        verificationMethod: 'manual',
+        documents: [
+          {
+            type: 'id',
+            status: 'approved',
+            uploadedAt: '2023-03-15T10:20:00Z'
+          },
+          {
+            type: 'address',
+            status: 'pending',
+            uploadedAt: '2023-03-15T10:25:00Z'
+          },
+          {
+            type: 'business',
+            status: 'pending',
+            uploadedAt: '2023-03-15T10:30:00Z'
+          }
+        ],
+        pgPartner: 'Stripe',
+        midStatus: 'pending'
       }
     },
     {
@@ -144,7 +212,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 2,
       kycStatus: 'verified',
       phone: '+1-202-555-0198',
-      // New service usage data
+      // Service usage data
       serviceUsage: {
         payin: true,
         payout: false,
@@ -160,6 +228,26 @@ export const getUsers = async (): Promise<User[]> => {
         payoutVolume: 0,
         apiCallCount: 0,
         avgTransactionSize: 650
+      },
+      // KYC details
+      kycDetails: {
+        verifiedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+        verifiedBy: 'compliance_team',
+        verificationMethod: 'manual',
+        documents: [
+          {
+            type: 'id',
+            status: 'approved',
+            uploadedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            type: 'address',
+            status: 'approved',
+            uploadedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+          }
+        ],
+        pgPartner: 'Stripe',
+        midStatus: 'active'
       }
     },
     {
@@ -177,7 +265,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 1,
       kycStatus: 'rejected',
       phone: '+1-202-555-0177',
-      // New service usage data
+      // Service usage data
       serviceUsage: {
         payin: true,
         payout: true,
@@ -193,6 +281,30 @@ export const getUsers = async (): Promise<User[]> => {
         payoutVolume: 95000,
         apiCallCount: 12500,
         avgTransactionSize: 8500
+      },
+      // KYC details
+      kycDetails: {
+        rejectionReason: 'Inconsistent documentation',
+        verificationMethod: 'manual',
+        documents: [
+          {
+            type: 'id',
+            status: 'rejected',
+            uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            type: 'address',
+            status: 'rejected',
+            uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            type: 'business',
+            status: 'pending',
+            uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+          }
+        ],
+        pgPartner: 'Adyen',
+        midStatus: 'rejected'
       }
     },
   ];
@@ -468,6 +580,8 @@ export const getTickets = async (): Promise<Ticket[]> => {
         name: 'John Doe',
         email: 'john.doe@example.com',
       },
+      tags: ['login', 'access-issue'],
+      group: 'Authentication',
     },
     {
       id: 102,
@@ -482,6 +596,8 @@ export const getTickets = async (): Promise<Ticket[]> => {
         name: 'Jane Smith',
         email: 'jane.smith@example.com',
       },
+      tags: ['transaction', 'deposit'],
+      group: 'Payments',
     },
     {
       id: 103,
@@ -496,6 +612,8 @@ export const getTickets = async (): Promise<Ticket[]> => {
         name: 'Mike Jones',
         email: 'mike.jones@example.com',
       },
+      tags: ['profile', 'support'],
+      group: 'Account',
     },
     {
       id: 104,
@@ -510,6 +628,8 @@ export const getTickets = async (): Promise<Ticket[]> => {
         name: 'John Doe',
         email: 'john.doe@example.com',
       },
+      tags: ['card', 'payment-issue'],
+      group: 'Payments',
     },
     {
       id: 105,
@@ -524,6 +644,8 @@ export const getTickets = async (): Promise<Ticket[]> => {
         name: 'Jane Smith',
         email: 'jane.smith@example.com',
       },
+      tags: ['statement', 'documents'],
+      group: 'Account',
     },
     {
       id: 106,
@@ -538,6 +660,8 @@ export const getTickets = async (): Promise<Ticket[]> => {
         name: 'Sarah Wilson',
         email: 'sarah.wilson@example.com',
       },
+      tags: ['dispute', 'transaction'],
+      group: 'Payments',
     },
     {
       id: 107,
@@ -552,6 +676,56 @@ export const getTickets = async (): Promise<Ticket[]> => {
         name: 'Robert Johnson',
         email: 'robert.johnson@example.com',
       },
+      tags: ['transfer', 'high-value', 'stuck'],
+      group: 'Transfers',
+    },
+    {
+      id: 108,
+      subject: 'KYC verification pending',
+      description: 'My KYC documents were submitted 3 days ago but still not verified',
+      status: 'pending',
+      priority: 'medium',
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+      userId: 'USER003',
+      requester: {
+        name: 'Mike Jones',
+        email: 'mike.jones@example.com',
+      },
+      tags: ['kyc', 'verification'],
+      group: 'Compliance',
+    },
+    {
+      id: 109,
+      subject: 'API documentation request',
+      description: 'Need updated API documentation for recent changes',
+      status: 'resolved',
+      priority: 'low',
+      createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
+      updatedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // 12 days ago
+      userId: 'USER002',
+      requester: {
+        name: 'Jane Smith',
+        email: 'jane.smith@example.com',
+      },
+      tags: ['api', 'documentation'],
+      group: 'Technical',
+    },
+    {
+      id: 110,
+      subject: 'MFA configuration help',
+      description: 'Having trouble setting up multi-factor authentication',
+      status: 'open',
+      priority: 'medium',
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+      updatedAt: new Date(Date.now() - 0.5 * 24 * 60 * 60 * 1000).toISOString(), // 12 hours ago
+      userId: 'USER004',
+      requester: {
+        name: 'Sarah Wilson',
+        email: 'sarah.wilson@example.com',
+      },
+      tags: ['mfa', 'security', 'authentication'],
+      group: 'Authentication',
     },
   ];
   
@@ -575,4 +749,18 @@ export const getDashboardStats = async (): Promise<DashboardStats> => {
   await new Promise(resolve => setTimeout(resolve, 900));
   
   return mockStats;
+};
+
+// New function to get user KYC tickets
+export const getUserKycTickets = async (userId: string): Promise<Ticket[]> => {
+  // In a real app, this would fetch from the API
+  // Here we're filtering from the mock tickets
+  const allTickets = await getTickets();
+  const userKycTickets = allTickets.filter(ticket => 
+    ticket.userId === userId && 
+    ticket.tags && 
+    ticket.tags.includes('kyc')
+  );
+  
+  return userKycTickets;
 };
