@@ -1,0 +1,93 @@
+
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getUsers } from '@/services/api';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import UserSearchTab from '@/components/users/UserSearchTab';
+import RiskOperationsTab from '@/components/users/RiskOperationsTab';
+import KycOperationsTab from '@/components/users/KycOperationsTab';
+import { User } from '@/types';
+
+const UsersManagement: React.FC = () => {
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  // Fetch users data
+  const { data: users, isLoading } = useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  });
+
+  return (
+    <DashboardLayout title="Users Management">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold tracking-tight">Centralized User Management</h1>
+        <p className="text-muted-foreground">
+          Search, analyze, and manage users across risk and KYC operations.
+        </p>
+      </div>
+
+      <Tabs defaultValue="search" className="w-full">
+        <TabsList className="grid grid-cols-3 w-full max-w-md mb-6">
+          <TabsTrigger value="search">User Search</TabsTrigger>
+          <TabsTrigger value="risk">Risk Operations</TabsTrigger>
+          <TabsTrigger value="kyc">KYC Operations</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="search">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Search</CardTitle>
+              <CardDescription>Find and manage users across all services</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <UserSearchTab 
+                users={users || []} 
+                isLoading={isLoading} 
+                onSelectUser={(user) => setSelectedUser(user)}
+                selectedUser={selectedUser}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="risk">
+          <Card>
+            <CardHeader>
+              <CardTitle>Risk Operations</CardTitle>
+              <CardDescription>Manage user risk profiles and assessments</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RiskOperationsTab 
+                users={users || []} 
+                isLoading={isLoading} 
+                onSelectUser={(user) => setSelectedUser(user)}
+                selectedUser={selectedUser}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="kyc">
+          <Card>
+            <CardHeader>
+              <CardTitle>KYC Operations</CardTitle>
+              <CardDescription>Manage user verification and compliance</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <KycOperationsTab 
+                users={users || []} 
+                isLoading={isLoading} 
+                onSelectUser={(user) => setSelectedUser(user)}
+                selectedUser={selectedUser}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </DashboardLayout>
+  );
+};
+
+export default UsersManagement;

@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/RiskDashboard";
 import Transactions from "./pages/Transactions";
 import Users from "./pages/Users";
+import UsersManagement from "./pages/UsersManagement";
 import Alerts from "./pages/Alerts";
 import Tickets from "./pages/Tickets";
 import KycDashboard from "./pages/KycDashboard";
@@ -51,6 +52,11 @@ const App = () => (
             <Route path="/users" element={
               <PrivateRoute>
                 <Users />
+              </PrivateRoute>
+            } />
+            <Route path="/users-management" element={
+              <PrivateRoute>
+                <UsersManagement />
               </PrivateRoute>
             } />
             <Route path="/alerts" element={
