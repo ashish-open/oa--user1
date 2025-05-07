@@ -1,5 +1,5 @@
-
 import { User, Transaction, Alert, Ticket, DashboardStats } from '@/types';
+import { fetchTickets as getFreshdeskTickets, setupFreshdeskAPI } from './freshdeskService';
 
 // Base URL for API calls - would be replaced with your actual API URL
 const BASE_URL = '/api';
@@ -23,6 +23,11 @@ async function fetchData<T>(endpoint: string, options = {}): Promise<T> {
 
   return response.json();
 }
+
+// Initialize Freshdesk API
+// In a real app, these would be stored in environment variables
+// For now we'll use defaults that can be updated by the app
+setupFreshdeskAPI('yourcompany', 'your-api-key-here');
 
 // For demonstration purposes, these functions return mock data
 // In a real app, these would make actual API calls
@@ -564,175 +569,14 @@ export const getAlerts = async (): Promise<Alert[]> => {
   return mockAlerts;
 };
 
-export const getTickets = async (): Promise<Ticket[]> => {
-  // Simulate API call with mock data
-  const mockTickets: Ticket[] = [
-    {
-      id: 101,
-      subject: 'Cannot access account',
-      description: 'I am unable to log into my account since yesterday.',
-      status: 'open',
-      priority: 'high',
-      createdAt: '2023-04-10T09:30:00Z',
-      updatedAt: '2023-04-10T09:30:00Z',
-      userId: 'USER001',
-      requester: {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-      },
-      tags: ['login', 'access-issue'],
-      group: 'Authentication',
-    },
-    {
-      id: 102,
-      subject: 'Missing transaction',
-      description: 'A deposit I made yesterday is not showing in my account.',
-      status: 'pending',
-      priority: 'medium',
-      createdAt: '2023-04-09T14:15:00Z',
-      updatedAt: '2023-04-10T10:20:00Z',
-      userId: 'USER002',
-      requester: {
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
-      },
-      tags: ['transaction', 'deposit'],
-      group: 'Payments',
-    },
-    {
-      id: 103,
-      subject: 'How to update personal info',
-      description: 'I need to change my address. How can I do this?',
-      status: 'resolved',
-      priority: 'low',
-      createdAt: '2023-04-08T11:45:00Z',
-      updatedAt: '2023-04-10T15:30:00Z',
-      userId: 'USER003',
-      requester: {
-        name: 'Mike Jones',
-        email: 'mike.jones@example.com',
-      },
-      tags: ['profile', 'support'],
-      group: 'Account',
-    },
-    {
-      id: 104,
-      subject: 'Card declined',
-      description: 'My card was declined at a restaurant even though I have funds.',
-      status: 'open',
-      priority: 'urgent',
-      createdAt: '2023-04-10T08:50:00Z',
-      updatedAt: '2023-04-10T09:05:00Z',
-      userId: 'USER001',
-      requester: {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-      },
-      tags: ['card', 'payment-issue'],
-      group: 'Payments',
-    },
-    {
-      id: 105,
-      subject: 'Account statement request',
-      description: 'I need a statement for the last three months for tax purposes.',
-      status: 'closed',
-      priority: 'low',
-      createdAt: '2023-04-05T16:20:00Z',
-      updatedAt: '2023-04-07T09:45:00Z',
-      userId: 'USER002',
-      requester: {
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
-      },
-      tags: ['statement', 'documents'],
-      group: 'Account',
-    },
-    {
-      id: 106,
-      subject: 'Dispute a charge',
-      description: 'I want to dispute a transaction I don\'t recognize.',
-      status: 'open',
-      priority: 'high',
-      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-      updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      userId: 'USER004',
-      requester: {
-        name: 'Sarah Wilson',
-        email: 'sarah.wilson@example.com',
-      },
-      tags: ['dispute', 'transaction'],
-      group: 'Payments',
-    },
-    {
-      id: 107,
-      subject: 'High value transfer issues',
-      description: 'My large value transfer is stuck in pending status',
-      status: 'open',
-      priority: 'urgent',
-      createdAt: new Date().toISOString(), // Today
-      updatedAt: new Date().toISOString(),
-      userId: 'USER005',
-      requester: {
-        name: 'Robert Johnson',
-        email: 'robert.johnson@example.com',
-      },
-      tags: ['transfer', 'high-value', 'stuck'],
-      group: 'Transfers',
-    },
-    {
-      id: 108,
-      subject: 'KYC verification pending',
-      description: 'My KYC documents were submitted 3 days ago but still not verified',
-      status: 'pending',
-      priority: 'medium',
-      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-      userId: 'USER003',
-      requester: {
-        name: 'Mike Jones',
-        email: 'mike.jones@example.com',
-      },
-      tags: ['kyc', 'verification'],
-      group: 'Compliance',
-    },
-    {
-      id: 109,
-      subject: 'API documentation request',
-      description: 'Need updated API documentation for recent changes',
-      status: 'resolved',
-      priority: 'low',
-      createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
-      updatedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // 12 days ago
-      userId: 'USER002',
-      requester: {
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
-      },
-      tags: ['api', 'documentation'],
-      group: 'Technical',
-    },
-    {
-      id: 110,
-      subject: 'MFA configuration help',
-      description: 'Having trouble setting up multi-factor authentication',
-      status: 'open',
-      priority: 'medium',
-      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-      updatedAt: new Date(Date.now() - 0.5 * 24 * 60 * 60 * 1000).toISOString(), // 12 hours ago
-      userId: 'USER004',
-      requester: {
-        name: 'Sarah Wilson',
-        email: 'sarah.wilson@example.com',
-      },
-      tags: ['mfa', 'security', 'authentication'],
-      group: 'Authentication',
-    },
-  ];
-  
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return mockTickets;
+export const getTickets = async (filters: { 
+  status?: string; 
+  priority?: string; 
+  group?: number; 
+  tags?: string[] 
+} = {}): Promise<Ticket[]> => {
+  // Using the Freshdesk service instead of mock data
+  return await getFreshdeskTickets(filters);
 };
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {

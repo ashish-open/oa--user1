@@ -1,3 +1,4 @@
+
 // User types
 export interface User {
   id: string;
@@ -112,6 +113,16 @@ export interface Ticket {
   };
   tags?: string[]; // Added tags field
   group?: string;  // Added group field
+  // New Freshdesk-specific data
+  freshdeskData?: {
+    responderId?: number;
+    groupId?: number;
+    source?: number;
+    dueBy?: string;
+    customFields?: {
+      [key: string]: any;
+    };
+  };
 }
 
 // Dashboard stats
