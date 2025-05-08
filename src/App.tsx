@@ -5,7 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
+import { PermissionsProvider } from "@/context/PermissionsContext";
 import PrivateRoute from "@/components/auth/PrivateRoute";
+import PermissionGate from "@/components/auth/PermissionGate";
 
 // Import pages
 import Login from "./pages/Login";
@@ -30,61 +32,82 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* Protected routes */}
-            <Route path="/" element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            } />
-            <Route path="/transactions" element={
-              <PrivateRoute>
-                <Transactions />
-              </PrivateRoute>
-            } />
-            <Route path="/users" element={
-              <PrivateRoute>
-                <UsersManagement />
-              </PrivateRoute>
-            } />
-            <Route path="/users-management" element={
-              <PrivateRoute>
-                <UsersManagement />
-              </PrivateRoute>
-            } />
-            <Route path="/risk-investigation" element={
-              <PrivateRoute>
-                <Users />
-              </PrivateRoute>
-            } />
-            <Route path="/alerts" element={
-              <PrivateRoute>
-                <Alerts />
-              </PrivateRoute>
-            } />
-            <Route path="/tickets" element={
-              <PrivateRoute>
-                <Tickets />
-              </PrivateRoute>
-            } />
-            <Route path="/kyc-dashboard" element={
-              <PrivateRoute>
-                <KycDashboard />
-              </PrivateRoute>
-            } />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <PermissionsProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              
+              {/* Root redirect to Users Hub */}
+              <Route path="/" element={<Navigate to="/users" replace />} />
+              
+              {/* Protected routes */}
+              <Route path="/risk-dashboard" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewRiskDashboard">
+                    <Dashboard />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/transactions" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewTransactions">
+                    <Transactions />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/users" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <UsersManagement />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/users-management" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <UsersManagement />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/risk-investigation" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewRiskInvestigation">
+                    <Users />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/alerts" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewAlerts">
+                    <Alerts />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/tickets" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewTickets">
+                    <Tickets />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/kyc-dashboard" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewKycDashboard">
+                    <KycDashboard />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </PermissionsProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
