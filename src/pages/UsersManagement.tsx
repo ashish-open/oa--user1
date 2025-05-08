@@ -9,9 +9,15 @@ import UserSearchTab from '@/components/users/UserSearchTab';
 import RiskOperationsTab from '@/components/users/RiskOperationsTab';
 import KycOperationsTab from '@/components/users/KycOperationsTab';
 import { User } from '@/types';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const UsersManagement: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [activeTab, setActiveTab] = useState<string>(
+    location.state?.activeTab || 'search'
+  );
 
   // Fetch users data
   const { data: users, isLoading } = useQuery({
@@ -19,8 +25,14 @@ const UsersManagement: React.FC = () => {
     queryFn: getUsers,
   });
 
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    navigate(`/users`, { state: { activeTab: value } });
+  };
+
   return (
-    <DashboardLayout title="Users Management">
+    <DashboardLayout title="Centralized User Hub">
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Centralized User Management</h1>
         <p className="text-muted-foreground">
@@ -28,7 +40,7 @@ const UsersManagement: React.FC = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="search" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid grid-cols-3 w-full max-w-md mb-6">
           <TabsTrigger value="search">User Search</TabsTrigger>
           <TabsTrigger value="risk">Risk Operations</TabsTrigger>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket, CheckCircle, UserSearch } from 'lucide-react';
+import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket, CheckCircle, UserSearch, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 
@@ -40,10 +40,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild onClick={() => navigate('/users-management')}>
+                    <SidebarMenuButton asChild onClick={() => navigate('/users')}>
                       <button className="w-full flex items-center">
                         <UserSearch className="mr-2 h-5 w-5" />
                         <span>Centralized User Hub</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild onClick={() => navigate('/risk-investigation')}>
+                      <button className="w-full flex items-center">
+                        <User className="mr-2 h-5 w-5" />
+                        <span>Risk Investigation</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -78,14 +86,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                       <button className="w-full flex items-center">
                         <LayoutDashboard className="mr-2 h-5 w-5" />
                         <span>Risk Dashboard</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild onClick={() => navigate('/users')}>
-                      <button className="w-full flex items-center">
-                        <Users className="mr-2 h-5 w-5" />
-                        <span>User Investigation</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
