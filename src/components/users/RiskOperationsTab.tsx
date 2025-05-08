@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,7 @@ const RiskOperationsTab: React.FC<RiskOperationsTabProps> = ({
   onSelectUser, 
   selectedUser 
 }) => {
+  // Fix: Explicitly defining the type for riskFilter
   const [riskFilter, setRiskFilter] = useState<'all' | 'high' | 'medium' | 'low'>('high');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [searchTerm, setSearchTerm] = useState('');
@@ -262,7 +262,7 @@ const RiskOperationsTab: React.FC<RiskOperationsTabProps> = ({
               <Label htmlFor="risk-filter">Risk Level</Label>
               <Select
                 value={riskFilter}
-                onValueChange={(value) => setRiskFilter(value)}
+                onValueChange={(value: 'all' | 'high' | 'medium' | 'low') => setRiskFilter(value)}
               >
                 <SelectTrigger id="risk-filter">
                   <SelectValue placeholder="Filter by risk" />
