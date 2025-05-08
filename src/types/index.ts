@@ -5,8 +5,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
-  permissions?: UserPermission[];
+  role: string;
   createdAt: string;
   tier?: string;
   businessType?: string;
@@ -64,26 +63,6 @@ export interface User {
     midStatus?: 'pending' | 'active' | 'rejected';
   };
 }
-
-// User Role and Permission types
-export type UserRole = 'superAdmin' | 'admin' | 'riskAnalyst' | 'kycAgent' | 'viewer';
-
-export type UserPermission = 
-  | 'viewUsers'
-  | 'manageUsers' 
-  | 'viewRiskDashboard' 
-  | 'viewTransactions' 
-  | 'manageTransactions'
-  | 'viewRiskInvestigation' 
-  | 'manageRiskScores' 
-  | 'viewAlerts' 
-  | 'manageAlerts'
-  | 'viewTickets' 
-  | 'manageTickets' 
-  | 'viewKycDashboard' 
-  | 'manageKyc'
-  | 'viewReports'
-  | 'manageSystem';
 
 // Transaction types
 export interface Transaction {
