@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { usePermissions } from '@/context/PermissionsContext';
 import { useNavigate } from 'react-router-dom';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from '@/components/ui/sidebar';
 import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket, CheckCircle, UserSearch, User, DollarSign, TrendingUp, Target, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
@@ -87,12 +87,32 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     <SidebarMenuItem>
-                      <SidebarMenuButton asChild onClick={() => navigate('/kyc-dashboard')}>
+                      <SidebarMenuButton asChild>
                         <button className="w-full flex items-center">
                           <CheckCircle className="mr-2 h-5 w-5" />
-                          <span>KYC Dashboard</span>
+                          <span>KYC</span>
                         </button>
                       </SidebarMenuButton>
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton href="/kyc/overview">KYC Overview</SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton href="/kyc/applications">KYC Applications</SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton href="/kyc/audit-logs">Audit Logs</SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton href="/kyc/team-performance">Team Performance</SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton href="/kyc/policy-documents">Policy & Documents</SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton href="/kyc/exceptions">Exceptions/Issues</SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
                     </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>

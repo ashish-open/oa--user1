@@ -24,6 +24,12 @@ import SalesPipeline from "./pages/SalesPipeline";
 import CustomerAnalytics from "./pages/CustomerAnalytics";
 import SalesCampaigns from "./pages/SalesCampaigns";
 import NotFound from "./pages/NotFound";
+import KycOverview from './pages/KycOverview';
+import KycApplications from './pages/KycApplications';
+import KycAuditLogs from './pages/KycAuditLogs';
+import KycTeamPerformance from './pages/KycTeamPerformance';
+import KycPolicyDocuments from './pages/KycPolicyDocuments';
+import KycExceptions from './pages/KycExceptions';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -99,10 +105,47 @@ const App = () => (
                   </PermissionGate>
                 </PrivateRoute>
               } />
-              <Route path="/kyc-dashboard" element={
+              
+              {/* KYC Team routes */}
+              <Route path="/kyc/overview" element={
                 <PrivateRoute>
                   <PermissionGate permission="viewKycDashboard">
-                    <KycDashboard />
+                    <KycOverview />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/kyc/applications" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewKycDashboard">
+                    <KycApplications />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/kyc/audit-logs" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewKycDashboard">
+                    <KycAuditLogs />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/kyc/team-performance" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewKycDashboard">
+                    <KycTeamPerformance />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/kyc/policy-documents" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewKycDashboard">
+                    <KycPolicyDocuments />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/kyc/exceptions" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewKycDashboard">
+                    <KycExceptions />
                   </PermissionGate>
                 </PrivateRoute>
               } />
