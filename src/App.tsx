@@ -18,6 +18,11 @@ import UsersManagement from "./pages/UsersManagement";
 import Alerts from "./pages/Alerts";
 import Tickets from "./pages/Tickets";
 import KycDashboard from "./pages/KycDashboard";
+import SalesDashboard from "./pages/SalesDashboard";
+import SalesOpportunities from "./pages/SalesOpportunities";
+import SalesPipeline from "./pages/SalesPipeline";
+import CustomerAnalytics from "./pages/CustomerAnalytics";
+import SalesCampaigns from "./pages/SalesCampaigns";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -98,6 +103,43 @@ const App = () => (
                 <PrivateRoute>
                   <PermissionGate permission="viewKycDashboard">
                     <KycDashboard />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              
+              {/* Sales Team routes */}
+              <Route path="/sales-dashboard" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <SalesDashboard />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/sales-opportunities" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <SalesOpportunities />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/sales-pipeline" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <SalesPipeline />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/customer-analytics" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <CustomerAnalytics />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/sales-campaigns" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <SalesCampaigns />
                   </PermissionGate>
                 </PrivateRoute>
               } />

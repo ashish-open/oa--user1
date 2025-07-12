@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import UserSearchTab from '@/components/users/UserSearchTab';
 import RiskOperationsTab from '@/components/users/RiskOperationsTab';
 import KycOperationsTab from '@/components/users/KycOperationsTab';
+import SalesOperationsTab from '@/components/users/SalesOperationsTab';
 import { User } from '@/types';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -41,10 +42,11 @@ const UsersManagement: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid grid-cols-3 w-full max-w-md mb-6">
+        <TabsList className="grid grid-cols-4 w-full max-w-2xl mb-6">
           <TabsTrigger value="search">User Search</TabsTrigger>
           <TabsTrigger value="risk">Risk Operations</TabsTrigger>
           <TabsTrigger value="kyc">KYC Operations</TabsTrigger>
+          <TabsTrigger value="sales">Sales Operations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="search">
@@ -89,6 +91,23 @@ const UsersManagement: React.FC = () => {
             </CardHeader>
             <CardContent>
               <KycOperationsTab 
+                users={users || []} 
+                isLoading={isLoading} 
+                onSelectUser={(user) => setSelectedUser(user)}
+                selectedUser={selectedUser}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="sales">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sales Operations</CardTitle>
+              <CardDescription>Maximize revenue with customer insights and sales analytics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SalesOperationsTab 
                 users={users || []} 
                 isLoading={isLoading} 
                 onSelectUser={(user) => setSelectedUser(user)}

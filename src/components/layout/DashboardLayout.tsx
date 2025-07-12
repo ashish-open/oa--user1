@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { usePermissions } from '@/context/PermissionsContext';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket, CheckCircle, UserSearch, User } from 'lucide-react';
+import { BarChart, AlertTriangle, Users, LayoutDashboard, ArrowLeftRight, Search, Shield, Ticket, CheckCircle, UserSearch, User, DollarSign, TrendingUp, Target, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 import { Badge } from '@/components/ui/badge';
@@ -148,6 +148,61 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </PermissionGate>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </PermissionGate>
+
+            {/* Sales Team Section */}
+            <PermissionGate permission="viewUsers">
+              <SidebarGroup>
+                <SidebarGroupLabel>Sales Team</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild onClick={() => navigate('/sales-dashboard')}>
+                        <button className="w-full flex items-center">
+                          <DollarSign className="mr-2 h-5 w-5" />
+                          <span>Sales Dashboard</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild onClick={() => navigate('/sales-opportunities')}>
+                        <button className="w-full flex items-center">
+                          <Target className="mr-2 h-5 w-5" />
+                          <span>Opportunities</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild onClick={() => navigate('/sales-pipeline')}>
+                        <button className="w-full flex items-center">
+                          <TrendingUp className="mr-2 h-5 w-5" />
+                          <span>Sales Pipeline</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild onClick={() => navigate('/customer-analytics')}>
+                        <button className="w-full flex items-center">
+                          <BarChart className="mr-2 h-5 w-5" />
+                          <span>Customer Analytics</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild onClick={() => navigate('/sales-campaigns')}>
+                        <button className="w-full flex items-center">
+                          <Phone className="mr-2 h-5 w-5" />
+                          <span>Campaigns</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
