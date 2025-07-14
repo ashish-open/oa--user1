@@ -11,25 +11,26 @@ import PermissionGate from "@/components/auth/PermissionGate";
 
 // Import pages
 import Login from "./pages/Login";
-import Dashboard from "./pages/RiskDashboard";
+import Dashboard from "./modules/risk/pages/RiskDashboard";
 import Transactions from "./pages/Transactions";
-import Users from "./pages/Users";
 import UsersManagement from "./pages/UsersManagement";
 import Alerts from "./pages/Alerts";
 import Tickets from "./pages/Tickets";
-import KycDashboard from "./pages/KycDashboard";
+import KycDashboard from "./modules/kyc/pages/KycDashboard";
 import SalesDashboard from "./pages/SalesDashboard";
 import SalesOpportunities from "./pages/SalesOpportunities";
 import SalesPipeline from "./pages/SalesPipeline";
 import CustomerAnalytics from "./pages/CustomerAnalytics";
 import SalesCampaigns from "./pages/SalesCampaigns";
 import NotFound from "./pages/NotFound";
-import KycOverview from './pages/KycOverview';
-import KycApplications from './pages/KycApplications';
-import KycAuditLogs from './pages/KycAuditLogs';
-import KycTeamPerformance from './pages/KycTeamPerformance';
-import KycPolicyDocuments from './pages/KycPolicyDocuments';
-import KycExceptions from './pages/KycExceptions';
+import KycOverview from './modules/kyc/pages/KycOverview';
+import KycApplications from './modules/kyc/pages/KycApplications';
+import KycAuditLogs from './modules/kyc/pages/KycAuditLogs';
+import KycTeamPerformance from './modules/kyc/pages/KycTeamPerformance';
+import KycPolicyDocuments from './modules/kyc/pages/KycPolicyDocuments';
+import KycExceptions from './modules/kyc/pages/KycExceptions';
+import RiskInvestigation from "./modules/risk/pages/RiskInvestigation";
+import SalesAnalytics from "./pages/SalesAnalytics";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -87,7 +88,7 @@ const App = () => (
               <Route path="/risk-investigation" element={
                 <PrivateRoute>
                   <PermissionGate permission="viewRiskInvestigation">
-                    <Users />
+                    <RiskInvestigation />
                   </PermissionGate>
                 </PrivateRoute>
               } />
@@ -183,6 +184,13 @@ const App = () => (
                 <PrivateRoute>
                   <PermissionGate permission="viewUsers">
                     <SalesCampaigns />
+                  </PermissionGate>
+                </PrivateRoute>
+              } />
+              <Route path="/sales-analytics" element={
+                <PrivateRoute>
+                  <PermissionGate permission="viewUsers">
+                    <CustomerAnalytics />
                   </PermissionGate>
                 </PrivateRoute>
               } />

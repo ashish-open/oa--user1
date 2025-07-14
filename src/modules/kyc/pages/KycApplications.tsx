@@ -11,6 +11,7 @@ const mockUsers = [
     role: 'kycAgent' as const,
     createdAt: '2024-04-01T10:00:00Z',
     kycStatus: 'pending' as const,
+    platform: 'OPEN',
     kycDetails: {
       documents: [
         { type: 'id' as const, status: 'pending' as const, uploadedAt: '2024-04-01T10:00:00Z' },
@@ -27,6 +28,7 @@ const mockUsers = [
     role: 'kycAgent' as const,
     createdAt: '2024-03-15T09:30:00Z',
     kycStatus: 'verified' as const,
+    platform: 'Zwitch',
     kycDetails: {
       documents: [
         { type: 'id' as const, status: 'approved' as const, uploadedAt: '2024-03-15T09:30:00Z' },
@@ -47,6 +49,7 @@ const mockUsers = [
     role: 'kycAgent' as const,
     createdAt: '2024-02-20T14:20:00Z',
     kycStatus: 'rejected' as const,
+    platform: 'Open Capital',
     kycDetails: {
       documents: [
         { type: 'id' as const, status: 'rejected' as const, uploadedAt: '2024-02-20T14:20:00Z' },

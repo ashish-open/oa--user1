@@ -1,4 +1,5 @@
 // Update this page (the content is just a fallback if you fail to update the page)
+import SalesAnalytics from './SalesAnalytics';
 
 const Index = () => {
   return (

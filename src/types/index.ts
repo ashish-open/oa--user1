@@ -21,6 +21,11 @@ export interface User {
   deviceChanges?: number;
   locationChanges?: number;
   unusualActivity?: boolean;
+  platform?: 'OPEN' | 'Zwitch' | 'Open Capital' | 'Open Accountant' | 'Axis Neo' | 'MBDB' | 'Bankonnect' | 'Yes Open' | string;
+  platforms?: Array<{
+    name: string;
+    features: string[];
+  }>;
   riskFactors?: {
     accountAge: number; // Risk contribution from account age
     transactionPattern: number; // Risk from transaction patterns

@@ -50,6 +50,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 0,
       kycStatus: 'verified',
       phone: '+1-202-555-0123',
+      platform: 'OPEN',
       // Service usage data
       serviceUsage: {
         payin: true,
@@ -108,6 +109,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 1,
       kycStatus: 'verified',
       phone: '+1-202-555-0189',
+      platform: 'Zwitch',
       // Service usage data
       serviceUsage: {
         payin: true,
@@ -161,6 +163,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 0,
       kycStatus: 'pending',
       phone: '+1-202-555-0145',
+      platform: 'Open Capital',
       // Service usage data
       serviceUsage: {
         payin: true,
@@ -217,6 +220,7 @@ export const getUsers = async (): Promise<User[]> => {
       complaints: 2,
       kycStatus: 'verified',
       phone: '+1-202-555-0198',
+      platform: 'Axis Neo',
       // Service usage data
       serviceUsage: {
         payin: true,
